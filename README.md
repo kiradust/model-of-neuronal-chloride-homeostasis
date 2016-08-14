@@ -1,2 +1,2 @@
 # mcmia
-multi-compartment model for impermeant anions
+Multi-Compartment Model for Impermeant Anions
