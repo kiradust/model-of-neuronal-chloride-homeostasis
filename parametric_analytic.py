@@ -56,16 +56,20 @@ for p in P:
     ecl.append(1000*R*np.log(cli[-1]/cle))
     exi.append(z*1000*R*np.log(xe/xi[-1]))
     ev.append(1000.0*v)
-    
+ 
+plt.figure()   
 plt.plot(P,nai,'r',P,ki,'c',P,cli,'g',P,xi,'b',P,vm,'k')
 plt.legend(['Nai','Ki','Cli','Xi','Vm'],loc=2)
 plt.show()
 
+plt.figure()
 plt.plot(vm,pi)
 plt.show()
 
+plt.figure()
 plt.plot(pi,nai,'r',pi,ki,'c',pi,cli,'g',pi,xi,'b',pi,vm,'k')
 plt.show()
 
+plt.figure()
 plt.plot(pi,ecl,'g',pi,ek,'c',pi,ev,'k')
 plt.show()
