@@ -29,25 +29,25 @@ p := initial log pump value satisfying the pump rate given by 10**(p)/(F*R) {def
 
 kcc2p(G,p,z)
 ==> runs the parametric solution at the pump rate defined by p for different gkcc2 values
-G := desired array of gkcc2 (conductance through KCC2 co-transporter) values
+G := desired array of gkcc2 (conductance through KCC2 co-transporter) values * 10**(10)
 p := initial log pump value satisfying the pump rate given by 10**(p)/(F*R) {default should be -5}
 z := charge of impermeant anions
 
 kcc2para(G,z)
 ==> runs the parametric solution over log pump rates in P for different gkcc2s, for fixed impermeant anion charge of z
-G := desired array of gkcc2 (conductance through KCC2 co-transporter) values [should be discrete here]
+G := desired array of gkcc2 (conductance through KCC2 co-transporter) values [should be discrete here] * 10**(10)
 z := charge of impermeant anions
 
 gclp(G,p,z,gkcc2)
 ==> runs the parametric solution at the pump rate defined by p for different gcl values and a given gkcc2 conductance
-G := desired array of gcl (chloride conductance) values
+G := desired array of gcl (chloride conductance) values * 10**(10)
 p := initial log pump value satisfying the pump rate given by 10**(p)/(F*R) {default should be -5}
 z := charge of impermeant anions
 gkcc2 := desired KCC2 conductance constant
 
 gclpara(G,z,gkcc2)
 ==> runs the parametric solution over log pump rates in P for different gcls, for fixed impermeant anion charge of z
-G := desired array of gcl (chloride conductance) values
+G := desired array of gcl (chloride conductance) values * 10**(10)
 z := charge of impermeant anions
 gkcc2 := desired KCC2 conductance constant
 
@@ -185,7 +185,9 @@ def plm(p=1e-5/F,graph=0,pkcc=pkcc,gx=0,xt=1000):
         plt.legend()
         plt.show()
         
-    return Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], na, k, cl, x, V, W, time, Na, K, Cl, X, Vm
+    print na, k, cl, x, V
+        
+    return Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], na, k, cl, x, V, W[10:-1], time[10:-1], Na[10:-1], K[10:-1], Cl[10:-1], X[10:-1], Vm[10:-1]
 
 def zplm(z,gkcc=0,gcl=5e-8):
     nai=[]
@@ -310,7 +312,7 @@ def kcc2p(G,p=-5,z=-0.85):
     q=10**(p)/(F*R)
     
     for u in G:
-        gkcc=u*1e-8     
+        gkcc=u*1e-10
         if z==-1:
             theta=0.5*ose/(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))
         else:
@@ -333,14 +335,14 @@ def kcc2p(G,p=-5,z=-0.85):
     plt.figure()
     plt.plot(G,nai,'r',G,ki,'c',G,cli,'g',G,xi,'b',G,vm,'k')
     plt.title('parametric plot: ion concentrations and membrane potential over gkcc2 conductances at log pump rate of '+str(p))
-    plt.xlabel('S (e-8)')
+    plt.xlabel('S (e10)')
     plt.ylabel('V                    M')
     plt.show()
     
     plt.figure()
     plt.plot(G,ena,'r',G,ek,'c',G,ecl,'g',G,exi,'b',G,ev,'k')
     plt.title('parametric plot: ionic reversals and membrane potential over gkcc2 conductances at log pump rate of '+str(p))
-    plt.xlabel('S (e-8)')
+    plt.xlabel('S (e10)')
     plt.ylabel('mV')    
     plt.show()
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm
@@ -355,7 +357,7 @@ def kcc2para(G,z=-0.85):
     plt.figure()
     
     for g in range(len(G)):
-        a=zplm(z,G[g]*1e-8,gcl)
+        a=zplm(z,G[g]*1e-10,gcl)
         N.append(a[1])
         K.append(a[2])
         C.append(a[3])
@@ -364,7 +366,7 @@ def kcc2para(G,z=-0.85):
         plt.plot(a[0],V[g],'k'+sym[g],a[0],K[g],'c'+sym[g],a[0],C[g],'g'+sym[g]) #,a[0],X[g],'b'+sym[g],a[0],N[g],'r'+sym[g]
 
     plt.title('parametric plot: ionic reversals and membrane potential over log pump rates for different gkcc2 conductances')
-    plt.xlabel('S (e8)')
+    plt.xlabel('1000.F.log(pump rate)')
     plt.ylabel('mV')    
     plt.show()
     
@@ -386,7 +388,7 @@ def gclp(G,p=-5,z=-0.85,gkcc=0e-8):
     q=10**(p)/(F*R)
     
     for u in G:
-        gcl=u*1e-8     
+        gcl=u*1e-10    
         if z==-1:
             theta=0.5*ose/(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))
         else:
@@ -409,14 +411,14 @@ def gclp(G,p=-5,z=-0.85,gkcc=0e-8):
     plt.figure()
     plt.plot(G,nai,'r',G,ki,'c',G,cli,'g',G,xi,'b',G,vm,'k')
     plt.title('parametric plot: ion concentrations and membrane potential over gcl conductances at log pump rate of '+str(p))
-    plt.xlabel('S (e8)')
+    plt.xlabel('S (e10)')
     plt.ylabel('V                    M')
     plt.show()
     
     plt.figure()
     plt.plot(G,ena,'r',G,ek,'c',G,ecl,'g',G,exi,'b',G,ev,'k')
     plt.title('parametric plot: ionic reversals and membrane potential over gcl conductances at log pump rate of '+str(p))
-    plt.xlabel('S (e8)')
+    plt.xlabel('S (e10)')
     plt.ylabel('mV')    
     plt.show()
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm
@@ -431,7 +433,7 @@ def gclpara(G,z=-0.85,gkcc=0e-8):
     plt.figure()
     
     for g in range(len(G)):
-        a=zplm(z,0e-8,G[g]*1e-8)
+        a=zplm(z,gkcc,G[g]*1e-10)
         N.append(a[1])
         K.append(a[2])
         C.append(a[3])
@@ -440,7 +442,7 @@ def gclpara(G,z=-0.85,gkcc=0e-8):
         plt.plot(a[0],K[g],'c'+sym[g],a[0],C[g],'g'+sym[g],a[0],V[g],'k'+sym[g]) #a[0],N[g],'r'+sym[g],a[0],X[g],'b'+sym[g]
 
     plt.title('parametric plot: ionic reversals and membrane potential over log pump rates for different gcl conductances')
-    plt.xlabel('S (e8)')
+    plt.xlabel('S (e10)')
     plt.ylabel('mV')    
     plt.show()
     
