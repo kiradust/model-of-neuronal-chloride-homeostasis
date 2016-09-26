@@ -7,16 +7,16 @@ Created on Sun Aug 14 22:21:56 2016
 import numpy as np
 import matplotlib.pyplot as plt
 
-P=range(-8000,-4700)
-gna=3e-9
+P=range(-8000,-4500)
+gna=5e-9
 gk=5e-8
 gcl=1e-8
-gkcc=2e-8 #Doyon uses between 0.2 and 2 mS/cm2
+gkcc=1e-8 #2e-8 #Doyon uses between 0.2 and 2 mS/cm2 (although they say 1 is 'high')
 R=25.69*1e-3
 F=96485.0
-nae=138e-3
+nae=145e-3
 cle=119e-3
-ke=2.8e-3
+ke=3.5e-3 #2.8e-3
 z=-0.85
 gamma=gna/gk
 alpha=1.0/(gk*gcl+gcl*gkcc-gk*gkcc)
@@ -68,6 +68,8 @@ plt.show()
 
 plt.figure()
 plt.plot(pi,nai,'r',pi,ki,'c',pi,cli,'g',pi,xi,'b',pi,vm,'k')
+plt.xlabel('pi')
+plt.ylabel('mM')  
 plt.show()
 
 plt.figure()
