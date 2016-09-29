@@ -1,0 +1,100 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[pdftex]{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\title{Analytic-parametric solution for the pump-leak model with a KCC2 transporter}
+\author{Kira D\"usterwald}
+
+\begin{document}
+
+\maketitle
+
+We want to find analytical solutions at steady state for the following variables: intracellular concentrations of sodium, potassium, chloride and impermeable anions ($Na_i, K_i, Cl_i$ and $X$, with charge $z$); membrane voltage ($V$). The steady state should occur in the presence of both a pump leak mechanism (sodium-potassium ATPase with pump rate modified by the sodium gradient, $P=p\cdot\Big(\frac{Na_i}{Na_e}\Big)^3$) and chloride-potassium extrusion (type 2 potassium-chloride co-transporter, KCC2, subject to some constant conductance $g_{KCC}$ and the reversal potentials of potassium and chloride (see Doyon et al., 2016)), while taking into account the usual passive forces across the membrane on each ion. Thus it ought to satisfy the following five equations:
+
+\begin{equation} \label{na}
+\frac{dI_{Na}}{dt} =0= g_{Na}(V-E_{Na})-3P
+\end{equation}
+\begin{equation} \label{k}
+\frac{dI_{K}}{dt} =0= g_K(V-E_{Na})+2P-g_{KCC}(E_K-E_{Cl})
+\end{equation}
+\begin{equation} \label{cl}
+\frac{dI_{Cl}}{dt} =0= g_{Cl}(V-E_{Cl})-g_{KCC}(E_K-E_{Cl})
+\end{equation}
+\begin{equation} \label{in}
+0=K_i+Na_i-Cl_i+zX
+\end{equation}
+\begin{equation} \label{osmo}
+ose = osi=K_i+Na_i+Cl_i+X
+\end{equation}
+
+We first solve the system as if the pump rate is constant, and then show that a parametric solution exists for $p$ such that the function mapping $P$ to $p$ is bijective. Thus we begin by solving each of \eqref{na}, \eqref{k} and \eqref{cl} for the reversal potential of the intracellular ion that they refer to, and then for the intracellular ions' concentration itself. By simple rearrangement,
+
+\begin{equation} \label{nai}
+Na_i = Na_e \cdot e^{-\frac{FV}{RT}} \cdot e^{-\frac{3PF}{RTg_{Na}}} 
+\end{equation}
+
+and
+
+\begin{equation} \label{ecl}
+E_{Cl} = \frac{g_{Cl}V+g_{KCC}E_K}{g_{Cl}+g_{KCC}}
+\end{equation}
+
+Let $\beta$ be equal to $g_Kg_{Cl}-g_{KCC}g_{Cl}+g_Kg_{KCC}$. If we substitute \eqref{ecl} into \eqref{k} for $E_{Cl}$, we can solve for $E_K$ and $K_i$, hence enabling us to substitute back into \eqref{ecl} in order to solve for $Cl_i$.
+
+Thus,
+
+\begin{equation*}
+E_K = V-2P\frac{g_{Cl}+g_{KCC}}{\beta}
+\end{equation*}
+
+and hence
+\begin{equation} \label{ki}
+K_i = K_e \cdot e^{-\frac{FV}{RT}} \cdot e^{\frac{F}{RT} \cdot 2P\frac{g_{Cl}+g_{KCC}}{\beta}}
+\end{equation}
+
+so then
+\begin{equation} \label{cli}
+Cl_i = Cl_e \cdot e^{\frac{FV}{RT}} \cdot e^{-\frac{F}{RT} \cdot \frac{2P \cdot g_{KCC}}{\beta}}
+\end{equation}
+
+We have now found equations for all permeable intracellular ions in terms of constants and $V$. An extension of these results means that we can find an equation for $X$ in terms of $V$ by rearranging the osmotic equilibrium equation \eqref{osmo}.
+
+\begin{equation} \label{x}
+X=ose-Na_i-K_i-Cl_i
+\end{equation}
+
+In order to solve for $V$, we substitute \eqref{x} into \eqref{in}, the equation that ensures intracellular charge neutrality. Thus we obtain:
+\begin{equation*}
+0=z\cdot ose + (1-z_X)(K_i+Na_i)-(1+z)Cl_i
+\end{equation*}
+
+Before substituting in for the permeable intracellular ions, let us denote $\theta = e^{-\frac{FV}{RT}}$.
+
+Of course the variable of interest in solving for $V$ is $\theta$. Then with substitution of \eqref{cli}, \eqref{ki} and \eqref{nai} the above equation becomes
+
+\begin{equation*}
+0=z \cdot ose + (1-z)\Big(K_e \cdot e^{\frac{2 P F \cdot (g_{Cl}+ g_{KCC})}{RT \cdot \beta}} +Na_e \cdot e^{-\frac{3PF}{RT\cdot g_{Na}}} \Big)\theta - (1+z)\cdot Cl_e \cdot e^{\frac{-2PF\cdot g_{KCC}}{RT \cdot \beta}}\frac{1}{\theta} 
+\end{equation*}
+
+Multiplying by $\theta$ we get a quadratic equation in terms of $\theta$ and then solving using the quadratic formula we obtain:
+
+\begin{scriptsize}
+\begin{equation} \label{q}
+\theta=\frac{-z \cdot ose+\sqrt{z^2 \cdot ose^2+4(1-z^2)\cdot Cl_e \cdot e^{-\frac{2PF\cdot G_{KCC}}{ RT\cdot \beta}}\cdot\Big(Na_e \cdot e^{-\frac{3PF}{RT\cdot g_{Na}}}+K_e\cdot e^{\frac{2 P F \cdot (g_{Cl}+ g_{KCC})}{RT \cdot \beta}}}\Big)}{2\cdot(1-z)\cdot\Big(Na_e \cdot e^{-\frac{3PF}{RT\cdot g_{Na}}}+K_e\cdot e^{\frac{2 P F \cdot (g_{Cl}+ g_{KCC})}{RT \cdot \beta}}\Big)}    
+\end{equation}
+
+\end{scriptsize}
+
+From this one can solve the system for any constants --- at least those constants which give positive real solutions for $\theta$ --- and then use $V=-\frac{RT}{F}\ln{\theta}$ to transform the solution into the corresponding membrane voltage. This implies that initial values of the intracellular ion concentrations do not affect the final steady state (this includes shifts in $X$ that do not change the average intracellular charge $z_X$). Note that \eqref{q} is slightly different when $z=-1$ to avoid division by 0 --- we leave the manipulation required to solve for this specific case as an exercise for the reader!
+
+Finally, one might also want to explore the use of this derivation, which assumes a constant pump rate $P$ for the ATPase, to solve for the scenario of a more complex pump rate. For example, the pump rate updated by $p\cdot\Big(\frac{Na_i}{Na_e}\Big)^3$ at every time step cannot be solved entirely analytically because one ends up attempting to find a solution for an expression unsolvable in the reals (\emph{W-Lambert Function}). In this case, one might plug different values of $P$ into the solution above, and then use the function $f(P, Na_i) := P=p\cdot\Big(\frac{Na_i}{Na_e}\Big)^3$ to solve for $p$ in the cubic model.
+
+Such a function rearranged with $p$ the subject of the formula resembles a parametric function. We might wish to use it to define $p$ as an independent variable determining the ionic solutions of the analytic solution above: being able to use $p$ in this way is very helpful because then each time-series run beginning with constant $p$ would have a unique steady state. However, to make the claim that we are allowed to use $p$ as suggested, the function mapping $P$ and the steady state $Na_i$ to $p$ needs to be injective (more strictly, $f: P\rightarrow p$ must be bijective). The reason for this constraint is that if ever a $p$, say $p_k$ is produced by more than one $P$ (and $Na_i$), we would have at least two possible steady states for the time series run with cubic pump rate constant $p_k$; then $p$ is not a sufficient independent variable.
+
+Indeed, it is easily found that the mapping between $p$ and $P$ is bijective (see figure). This proves that the analytical method above is sufficient for finding a parametric solution for the cubic pump rate pump leak model.
+
+\end{document}
