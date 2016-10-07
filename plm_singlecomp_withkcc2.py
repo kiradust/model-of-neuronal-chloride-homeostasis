@@ -63,6 +63,14 @@ gkcc := desired KCC2 conductance constant
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+from pylab import rcParams
+rcParams['figure.figsize'] = 8,8
+
+clcolor='#2095e7'
+kcolor='#53b29d'
+xcolor='m'
+nacolor='#f27a29'
+wcolor='#aaaaaa'
 
 #constants
 R=25.69*1e-3
@@ -80,7 +88,7 @@ nao=145e-3
 clo=119e-3
 ko=3.5e-3 #nao,clo,ko: extracellular concentrations (mM converted to M)
 z=-0.85 #intracellular (and extracellular) charge of impermeant anions
-pkcc=0.0
+pkcc=1.0e-8
 gamma=gna/gk
 alpha=1.0/(gk*gcl+gcl*gkcc-gk*gkcc)
 beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
@@ -91,10 +99,10 @@ xe1=-1*(cle-nae-ke)
 xe=xe1/2.0
 ose=xe1+cle+nae+ke
 P=range(-7000,-4600)
-default_p=-1.995
+default_p=-2.432631
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/F,graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=5e-3,toff=15000,ton=15000,tt=200,xinit=155e-3):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=1000):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -107,6 +115,9 @@ def plm(p=(10**(default_p))/F,graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=
     X2=[]
     Na2=[]
     K2=[]
+    z_delt=[]
+    xe_delt=[]
+    gkcc_delt=[]
     
     dt=1e-3 #zero time, dt time step
     if p<10**(-6)/F:
@@ -123,13 +134,24 @@ def plm(p=(10**(default_p))/F,graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=
     C=7e-6 #capacitance (F/dm^2)
     FinvCAr=F/(C*Ar) #(F/C*area scaling constant)
     
-    na=19e-3
+    na=25.562e-3
     #cl=((os_init-na-k)*z+na+k)/(1+z)
     cl=clinit
     #x=(cl-na-k)/z #na,k,cl,x: intracellular starting concentrations
     x=xinit
-    k=cl-z*x-na
+    z=-0.85
+    k=k_init
+    if k_init==0:
+        k=cl-z*x-na
     print k
+    xm=0
+    zx=z
+    cle=clo
+    
+    if two==1:
+        xm=x/2.0
+        x=xm
+        zx=-0.7
     
     for i in range(2,tit): #loop over time
         if (toff>t) and (t>ton):
@@ -138,43 +160,57 @@ def plm(p=(10**(default_p))/F,graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=
             sw=1
         if t>toff:
             sw=1     #control switch
+            
+        if tk+50>t>tk:
+            pkcc += 1e-12    #control switch for gkkc ramp
         
-        V=FinvCAr*(na+k-cl+z*x) #voltage
+        V=FinvCAr*(na+k-cl+z*(x+xm)) #voltage
         
         #update arrays for plotting
         if t>=(ctr-1)*ts:
-            K.append(1000*R*np.log(ko/k))
+            K.append(1000*R*np.log(ke/k))
             K2.append(1000*k)
             Na.append(1000*R*np.log(nao/na))
             Na2.append(1000*na)
-            Cl.append(1000*R*np.log(cl/clo))
+            Cl.append(1000*R*np.log(cl/cle))
             Cl2.append(cl*1000.0)
             X.append(z*1000*R*np.log(xe/x))
-            X2.append(1000*x)
+            X2.append(1000*(x+xm))
             W.append(w/w1)
             Vm.append(1000*V)
             time.append(t)
+            z_delt.append(z)
+            xe_delt.append(xe)
+            gkcc_delt.append(pkcc)
             ctr+=1
         
         jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
         
         #kcc2
         #jkcc2=sw*(gk*pkcc*(k*clo-k*cl)) #Fraser and Huang
-        jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/10000.0 #Doyon
+        jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
 
         #ionic flux equations
         dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw) 
-        dk=-dt*Ar*(gk*(V-R*np.log(ko/k))-ck*jp*sw+jkcc2)
-        dcl=dt*Ar*(gcl*(V+R*np.log(clo/cl))-jkcc2) #dna,dk,dcl: increase in intracellular ion conc during time step dt
-        dx=-dt*Ar*(gx*(V-R/z*np.log(xe/x)))
+        dk=-dt*Ar*(gk*(V-R*np.log(ke/k))-ck*jp*sw-jkcc2)
+        dcl=dt*Ar*(gcl*(V+R*np.log(cle/cl))+jkcc2) #dna,dk,dcl: increase in intracellular ion conc during time step dt
+        dx=-dt*Ar*(gx*(V-R/zx*np.log(xe/(x))))
         na+=dna
         k+=dk
         cl+=dcl #increment concentrations
         if xt+50>t>xt:
-            x+=dx 
+            x+=dx
+            if two==1:
+                z=(-0.7*xm-1.0*x)/(xm+x)
         
+        if f4d!=0:
+            if xt+50>t>xt:
+                xe+=f4d*1e-3
+                cle-=f4d*1e-3
+                
         #update volume
-        osi=na+k+cl+x #intracellular osmolarity 
+        osi=na+k+cl+x+xm #intracellular osmolarity 
+        ose=nae+ke+cle+xe+xe1/2.0
         w2=(w*osi)/ose #update volume 
         
         #correct ionic concentrations by volume change
@@ -182,27 +218,28 @@ def plm(p=(10**(default_p))/F,graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=
         k=(k*w)/w2
         cl=(cl*w)/w2
         x=(x*w)/w2
+        xm=(xm*w)/w2
         w=w2
         t+=dt
     
     #plot if asked    
     if graph==1:
         gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
-        plt.figure
+        plt.figure()
         plt.subplot(gs[0])
-        plt.plot (time,Cl2,'-g',time,K2,'-c',time,X2,'-b',time,Na2,'-r',)
-        plt.legend(['Cl','K','X','Na'])
+        plt.plot (time,Cl2,color=clcolor)
+        plt.plot(time,K2,color=kcolor)
+        plt.plot(time,X2,color=xcolor)
+        plt.plot(time,Na2,color=nacolor)
         plt.subplot(gs[1])
         plt.plot(time,Vm,'k')
-        plt.legend('Vm')
         plt.subplot(gs[2])
-        plt.plot(time,W,'k',label='relative volume')
-        plt.legend()
+        plt.plot(time,W,color=wcolor,label='relative volume')
         plt.show()
         
-    print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V
+    print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose
         
-    return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2[0:-1], Na2[0:-1], K2[0:-1], X2[0:-1], w
+    return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K, X2, w, z_delt, xe_delt, gkcc_delt
 
 def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk):
     nai=[]
@@ -217,7 +254,8 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk):
     ecl=[]
     exi=[]
     ev=[]
-    
+    w=[]
+    beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
     for p in P:
         q=10**(p/1000.0)/(F*R)
         if z==-1:
@@ -238,8 +276,9 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk):
         ecl.append(1000*R*np.log(cli[-1]/cle))
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
+        w.append(0.155157217542/xi[-1])
     
-    return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm
+    return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
     
 def checkpara():
     ti=[[],[],[],[],[],[],[],[],[],[],[]]
@@ -254,18 +293,22 @@ def checkpara():
     para=zplm(z,0,gcl)
     gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
     plt.subplot(gs[0])
-    plt.plot(para[0],para[8],'g',para[0],para[7],'c',para[0],para[6],'r',para[0],para[9],'b',T,ti[0],'or',T,ti[1],'oc',T,ti[2],'og',T,ti[3],'ob')
-    plt.legend(['Cl','K','X','Na'])
+    plt.plot(para[0],para[8],color=clcolor)
+    plt.plot(para[0],para[7],color=kcolor)
+    plt.plot(para[0],para[6],color=nacolor)
+    plt.plot(para[0],para[9],color=xcolor)
+    plt.plot(T,ti[0],color=nacolor,linestyle='o')
+    plt.plot(T,ti[1],color=kcolor,linestyle='o')
+    plt.plot(T,ti[2],color=clcolor,linestyle='o')
+    plt.plot(T,ti[3],oolor=xcolor,linestyle='o')
     plt.subplot(gs[1])
     plt.plot(para[0],para[10],'k',T,ti[4],'ok')
-    plt.legend(['Vm'])
     plt.subplot(gs[2])
-    plt.plot(T,ti[21],'k')
-    plt.legend(['relative volume'])
+    plt.plot(T,ti[21],color=wcolor)
     plt.show()
     return
 
-def zp(Z,p=default_P/1000.0,gkcc=0,graph=0):
+def zp(Z,p=default_P/1000.0,gkcc=pkcc,graph=0):
     nai=[]
     ki=[]
     cli=[]
@@ -279,6 +322,7 @@ def zp(Z,p=default_P/1000.0,gkcc=0,graph=0):
     exi=[]
     ev=[]
     w=[]
+    
     q=10**(p)/(F*R)
     
     for u in Z:
@@ -294,7 +338,7 @@ def zp(Z,p=default_P/1000.0,gkcc=0,graph=0):
         ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc)*beta))
         cli.append(cle*np.exp(+v/R-2*q*gkcc*beta))
         xi.append(ose-nai[-1]-cli[-1]-ki[-1])
-        pi.append(1000.0*np.log10(F*R*q/(((nae*np.exp(-v/R-3*q/gna))/nae)**3)))
+        pi.append(np.log10(F*R*q/(((nae*np.exp(-v/R-3*q/gna))/nae)**3)))
         
         ek.append(1000*R*np.log(ke/ki[-1]))
         ena.append(1000*R*np.log(nae/nai[-1]))
@@ -302,7 +346,7 @@ def zp(Z,p=default_P/1000.0,gkcc=0,graph=0):
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
         
-        w.append(0.155157217542/xi[-1])
+        w.append(0.15585779011/xi[-1])
     
     if graph ==1:
         plt.figure()
@@ -320,7 +364,7 @@ def zp(Z,p=default_P/1000.0,gkcc=0,graph=0):
         plt.show()
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
 
-def kcc2p(G,p=-5,z=-0.85):
+def kcc2p(G,p=default_P,z=-0.85):
     nai=[]
     ki=[]
     cli=[]
@@ -356,19 +400,19 @@ def kcc2p(G,p=-5,z=-0.85):
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
     
-    plt.figure()
-    plt.plot(G,nai,'r',G,ki,'c',G,cli,'g',G,xi,'b',G,vm,'k')
-    plt.title('parametric plot: ion concentrations and membrane potential over gkcc2 conductances at log pump rate of '+str(p))
-    plt.xlabel('S (e10)')
-    plt.ylabel('V                    M')
-    plt.show()
+    #plt.figure()
+    #plt.plot(G,nai,'r',G,ki,'c',G,cli,'g',G,xi,'b',G,vm,'k')
+    #plt.title('parametric plot: ion concentrations and membrane potential over gkcc2 conductances at log pump rate of '+str(p))
+    #plt.xlabel('S (e10)')
+    #plt.ylabel('V                    M')
+    #plt.show()
     
-    plt.figure()
-    plt.plot(G,ena,'r',G,ek,'c',G,ecl,'g',G,exi,'b',G,ev,'k')
-    plt.title('parametric plot: ionic reversals and membrane potential over gkcc2 conductances at log pump rate of '+str(p))
-    plt.xlabel('S (e10)')
-    plt.ylabel('mV')    
-    plt.show()
+    #plt.figure()
+    #plt.plot(G,ena,'r',G,ek,'c',G,ecl,'g',G,exi,'b',G,ev,'k')
+    #plt.title('parametric plot: ionic reversals and membrane potential over gkcc2 conductances at log pump rate of '+str(p))
+    #plt.xlabel('S (e10)')
+    #plt.ylabel('mV')    
+    #plt.show()
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm
 
 def kcc2para(G,z=-0.85):
@@ -472,7 +516,7 @@ def gclpara(G,z=-0.85,gkcc=0e-8):
     
     return a[0], N, K, C, X, V
 
-def deltax(GX,z=-0.85,pip=1e-5/F,gkcc=[0e-8]):
+def deltax(GX,z=-0.85,pip=1e-5/F,gkcc=[0e-8],two=0):
     N=[]
     K=[]
     C=[]
