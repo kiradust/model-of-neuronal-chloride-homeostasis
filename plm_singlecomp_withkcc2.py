@@ -65,12 +65,7 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
-
-clcolor='#2095e7'
-kcolor='#53b29d'
-xcolor='m'
-nacolor='#f27a29'
-wcolor='#aaaaaa'
+from plotting import clcolor, kcolor, xcolor,nacolor,wcolor
 
 #constants
 R=25.69*1e-3
@@ -102,7 +97,7 @@ P=range(-7000,-4600)
 default_p=-2.432631
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=1000):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=1000,ratio=0.98,xend=51,osmofix=False):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -135,24 +130,33 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clini
     FinvCAr=F/(C*Ar) #(F/C*area scaling constant)
     
     na=25.562e-3
+    x=xinit
     #cl=((os_init-na-k)*z+na+k)/(1+z)
     cl=clinit
     #x=(cl-na-k)/z #na,k,cl,x: intracellular starting concentrations
-    x=xinit
     z=-0.85
     k=k_init
+        
+    if osmofix==True:
+        if xinit==0:
+            x=(os_init-2*cl)/(1-z)
+        else:
+            cl=(os_init+(z-1)*x)/2.0
+    
     if k_init==0:
         k=cl-z*x-na
-    print k
-    xm=0
+    print "k_init: "+str(k)
+    print "ose: "+str(k+cl+x+na)
+    xm=x*ratio
+    xtemp=x*(1-ratio)
+    zxm=z
     zx=z
     cle=clo
     
     if two==1:
-        xm=x/2.0
-        x=xm
-        zx=-0.7
-    
+        zx=-1
+        zxm=(z*x-zx*xtemp)/xm
+        
     for i in range(2,tit): #loop over time
         if (toff>t) and (t>ton):
             sw=0
@@ -161,10 +165,18 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clini
         if t>toff:
             sw=1     #control switch
             
-        if tk+50>t>tk:
-            pkcc += 1e-12    #control switch for gkkc ramp
+        if tk+51>t>tk:
+            pkcc += 5e-12    #control switch for gkkc ramp
         
-        V=FinvCAr*(na+k-cl+z*(x+xm)) #voltage
+        if two==1:
+            z=(zxm*xm+zx*xtemp)/(xm+xtemp)
+        
+        if f4d!=0:
+            if xt+50>t>xt:
+                xe+=f4d*1e-3
+                cle-=f4d*1e-3
+        
+        V=FinvCAr*(na+k-cl+z*x) #voltage
         
         #update arrays for plotting
         if t>=(ctr-1)*ts:
@@ -175,8 +187,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clini
             Cl.append(1000*R*np.log(cl/cle))
             Cl2.append(cl*1000.0)
             X.append(z*1000*R*np.log(xe/x))
-            X2.append(1000*(x+xm))
-            W.append(w/w1)
+            X2.append(1000*(x))
+            W.append(w)
             Vm.append(1000*V)
             time.append(t)
             z_delt.append(z)
@@ -194,22 +206,23 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clini
         dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw) 
         dk=-dt*Ar*(gk*(V-R*np.log(ke/k))-ck*jp*sw-jkcc2)
         dcl=dt*Ar*(gcl*(V+R*np.log(cle/cl))+jkcc2) #dna,dk,dcl: increase in intracellular ion conc during time step dt
-        dx=-dt*Ar*(gx*(V-R/zx*np.log(xe/(x))))
+        dx=-dt*Ar*(gx*(V-R/zx*np.log(xe/(xtemp))))
         na+=dna
         k+=dk
         cl+=dcl #increment concentrations
-        if xt+50>t>xt:
-            x+=dx
-            if two==1:
-                z=(-0.7*xm-1.0*x)/(xm+x)
         
-        if f4d!=0:
-            if xt+50>t>xt:
-                xe+=f4d*1e-3
-                cle-=f4d*1e-3
+        if xend == 0:
+            if x*w-xinit*w1 < 1e-11:
+                xtemp+=dx
+            else:
+                print 'anions stopped diffusing at '+str(t)
+                xend=1
                 
+        if xt+xend>t>xt:
+            xtemp+=dx        
         #update volume
-        osi=na+k+cl+x+xm #intracellular osmolarity 
+        x=xm+xtemp
+        osi=na+k+cl+x #intracellular osmolarity 
         ose=nae+ke+cle+xe+xe1/2.0
         w2=(w*osi)/ose #update volume 
         
@@ -219,6 +232,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clini
         cl=(cl*w)/w2
         x=(x*w)/w2
         xm=(xm*w)/w2
+        xtemp=(xtemp*w)/w2
         w=w2
         t+=dt
     
@@ -237,7 +251,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clini
         plt.plot(time,W,color=wcolor,label='relative volume')
         plt.show()
         
-    print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose
+    print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'deltx', x*w-xinit*w1
         
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K, X2, w, z_delt, xe_delt, gkcc_delt
 
@@ -552,3 +566,6 @@ def deltax(GX,z=-0.85,pip=1e-5/F,gkcc=[0e-8],two=0):
     plt.show()
     
     return a[11], C, K, V, W, X, N
+
+def ecl(cli):
+    return R*np.log(cli/clo)

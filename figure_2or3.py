@@ -5,9 +5,9 @@ Created on Tue Sep 27 12:11:36 2016
 @author: Kira
 @title: Figure 2/3
 """
-from plm_singlecomp_withkcc2 import plm, zplm, z, ose, default_P, F, nae, ke, cle, xe, R, wcolor, kcolor, clcolor, xcolor
+from plm_singlecomp_withkcc2 import plm, zplm, z, ose, default_P, F, nae, ke, cle, xe, R
+from plotting import minifig, minithreefig, twoaxes,wcolor, kcolor, clcolor, xcolor
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
 import numpy as np
 from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
@@ -60,17 +60,6 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10]):
         ev.append(1000.0*v)
     
     return chosen,ecl,ek,ena,exi,ev,w
-    
-def minifig(delta):
-    plt.figure()
-    gs = gridspec.GridSpec(2, 1, height_ratios=[1.5, 1]) 
-    plt.subplot(gs[0])
-    plt.plot(delta[0],delta[1],color=clcolor)
-    plt.plot(delta[0],delta[2],color=kcolor)
-    plt.plot(delta[0],delta[5],'k')
-    plt.subplot(gs[1])
-    plt.plot(delta[0],delta[6],color=wcolor)
-    return
 
 def f2a():
     minifig(delta_gs(Gk=range(10,400),Gna=[50],Gkcc=[10],Gcl=[10]))
@@ -84,22 +73,8 @@ def f2a():
     #minifig(delta_gs(Gkcc=d_range,Gk=[50],Gna=[50],Gcl=[10]))
     return
     
-def minithreefig(delta,colour):
-    plt.figure()
-    gs = gridspec.GridSpec(3,1,height_ratios=[1.5,0.5,0.5])
-    plt.subplot(gs[0])
-    plt.plot(delta[0],delta[1],color=clcolor)
-    plt.plot(delta[0],delta[2],color=kcolor)
-    plt.plot(delta[0],delta[3],'k')
-    plt.subplot(gs[1])
-    plt.plot(delta[0],delta[4],color=wcolor) #volume
-    plt.subplot(gs[2])
-    plt.plot(delta[0],delta[5],color=colour) #conc X
-    plt.show()
-    return
-    
 def f3a():
-    dg=plm(tk=50,tt=250)
+    dg=plm(tk=25,tt=100)
     minithreefig([dg[11][1:-1],dg[14][1:-1],dg[13][1:-1],dg[16][1:-1],dg[10][1:-1],dg[24][1:-1]],'k')
     plt.show()
     return
