@@ -97,7 +97,7 @@ P=range(-7000,-4600)
 default_p=-2.432631
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=1000,ratio=0.98,xend=51,osmofix=False):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=10000,ratio=0.98,xend=51,osmofix=False):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -211,15 +211,16 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1000,os_init=ose,clini
         k+=dk
         cl+=dcl #increment concentrations
         
-        if xend == 0:
-            if x*w-xinit*w1 < 1e-11:
+        if xend==0 and (t>xt):
+            if (x*w-xinit*w1<1e-12):
                 xtemp+=dx
             else:
                 print 'anions stopped diffusing at '+str(t)
                 xend=1
                 
         if xt+xend>t>xt:
-            xtemp+=dx        
+            xtemp+=dx 
+            print "no"
         #update volume
         x=xm+xtemp
         osi=na+k+cl+x #intracellular osmolarity 

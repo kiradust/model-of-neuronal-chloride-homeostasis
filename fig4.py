@@ -9,6 +9,7 @@ from plm_singlecomp_withkcc2 import plm, zp
 from plotting import minifig, minithreefig, minifigtwoaxes,twoaxes,xcolor
 import matplotlib.pyplot as plt
 from pylab import rcParams
+import numpy as np
 rcParams['figure.figsize'] = 8,8
 
 sym=['-',':','--','-.']
@@ -45,21 +46,22 @@ def f4b(init_x=range(1,251,19)):
     
 def f4c(gX=1e-8,tt=100,xt=25,ratio=0.98):
     dex=plm(gx=gX,xt=xt,tt=tt,ratio=ratio)
-    minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[15][1:-1]],xcolor)
+    minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
     return
     
-def sf4c(GX=[1,10,50,100,500,1000],tt=2000,xt=25,ratio=0.98,xend=0):
+def sf4c(GX=[5e-10,1e-9,5e-9,7e-9,1e-8,2e-8],tt=600,xt=25,ratio=0.98,xend=0):
     deltecl=[]
     maxdeltecl=[]
     deltw=[]
     deltx=[]
     for i in GX:
-        dex=plm(gx=i*1e-11,xt=xt,tt=tt,ratio=ratio,xend=xend)
-        deltecl.append(dex[14][-1]-dex[14][0])
-        maxdeltecl.append(max(dex[14])-dex[14][0])
-        deltw.append(dex[10][-1]-dex[10][0])
-        deltx.append((max(dex[15])-dex[15][0]))
-        #minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[15][1:-1]],xcolor)
+        dex=plm(gx=i,xt=xt,tt=tt,ratio=ratio,xend=xend)
+        deltecl.append(dex[14][-1]-dex[14][1])
+        maxdeltecl.append(max(np.absolute((dex[14]-dex[14][1]))))
+        deltw.append((dex[10][-1])/dex[10][1])
+        deltx.append(max(np.absolute((dex[20]-dex[20][1]))))
+        #minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
+    print maxdeltecl
     twoaxes(GX,deltecl,maxdeltecl,deltx,deltw)
     return
     
