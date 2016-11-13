@@ -65,22 +65,28 @@ def sf4c(GX=[5e-10,1e-9,5e-9,7e-9,1e-8,2e-8],tt=600,xt=25,ratio=0.98,xend=0):
     twoaxes(GX,deltecl,maxdeltecl,deltx,deltw)
     return
     
-def f4e(Z=range(-120,-50)):
-    zee=zp(Z=Z)
+def f4e(Z=range(-120,-50),moldelt=1e-12):
+    molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=moldelt)
+    zee=zp(Z=Z,molinit=molinit,moldelt=moldelt)
     newx=[]
     for i in zee[9]:
         newx.append(i)
     minifigtwoaxes([Z,zee[3],zee[2],zee[5],zee[11],newx])
     plt.show()
-    
     return
     
-def f4f():
-    dez=plm(gx=1e-8,xt=25,tt=100,two=1)
+def f4f(moldelt=1e-12):
+    dez=plm(gx=1e-8,xt=25,tt=100,two=1,xend=0,moldelt=moldelt)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
-    return
+    return dez[11][-1],dez[14][-1],dez[13][-1],dez[16][-1],dez[10][-1],dez[22][-1]
     
 def f4d(f=1e-3):
     dxe=plm(graph=1,gx=0,xt=25,two=0,tt=100,f4d=f)
     minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],'k')
     return
+    
+def f4e_and_f(moldelt):
+    f4e(moldelt=moldelt)
+    f4f(moldelt=moldelt)
+    return
+    

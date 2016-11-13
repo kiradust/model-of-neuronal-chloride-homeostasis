@@ -97,7 +97,7 @@ P=range(-7000,-4600)
 default_p=-2.432631
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=10000,ratio=0.98,xend=51,osmofix=False):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=10000,ratio=0.98,xend=51,osmofix=False,paratwo=False,moldelt=1e-12):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -156,6 +156,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
     if two==1:
         zx=-1
         zxm=(z*x-zx*xtemp)/xm
+        if paratwo==True:
+            return (w*xinit)
         
     for i in range(2,tit): #loop over time
         if (toff>t) and (t>ton):
@@ -212,7 +214,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         cl+=dcl #increment concentrations
         
         if xend==0 and (t>xt):
-            if (x*w-xinit*w1<1e-12):
+            if (x*w-xinit*w1<moldelt):
                 xtemp+=dx
             else:
                 print 'anions stopped diffusing at '+str(t)
@@ -256,7 +258,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K, X2, w, z_delt, xe_delt, gkcc_delt
 
-def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk):
+def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     nai=[]
     ki=[]
     cli=[]
@@ -291,7 +293,10 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk):
         ecl.append(1000*R*np.log(cli[-1]/cle))
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
-        w.append(0.155157217542/xi[-1])
+        if molinit != 0:
+            w.append((molinit+1e-12)/xi[-1])
+        else:
+            w.append(0.155157217542/xi[-1])
     
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
     
@@ -323,7 +328,7 @@ def checkpara():
     plt.show()
     return
 
-def zp(Z,p=default_P/1000.0,gkcc=pkcc,graph=0):
+def zp(Z,p=default_P/1000.0,gkcc=pkcc,graph=0,molinit=0,moldelt=0):
     nai=[]
     ki=[]
     cli=[]
@@ -361,7 +366,10 @@ def zp(Z,p=default_P/1000.0,gkcc=pkcc,graph=0):
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
         
-        w.append(0.15585779011/xi[-1])
+        if molinit != 0:
+            w.append((molinit+moldelt)/xi[-1])
+        else:
+            w.append(0.155157217542/xi[-1])
     
     if graph ==1:
         plt.figure()

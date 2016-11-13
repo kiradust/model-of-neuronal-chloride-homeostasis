@@ -25,7 +25,6 @@ def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3]):
         leg.append(str(init_cl[i]*1000)+' mM')
     #plt.legend(leg)
     plt.show()
-    
     return
         
 def f1c():
