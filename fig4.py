@@ -74,8 +74,8 @@ def f4e(Z=range(-120,-50),moldelt=1e-12):
     a,b,c = minifigtwoaxes([Z,zee[3],zee[2],zee[5],zee[11],newx])
     return a,b,c
     
-def f4f(moldelt=1e-12,ratio=0.98):
-    dez=plm(gx=1e-8,xt=25,tt=200,two=1,xend=0,moldelt=moldelt,ratio=ratio)
+def f4f(moldelt=1e-13,ratio=0.98):
+    dez=plm(gx=1e-8,xt=25,tt=200,two=1,xend=0,moldelt=2e-14,ratio=ratio)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
     return
     
@@ -84,7 +84,7 @@ def f4d(f=1e-3):
     minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],'k')
     return
     
-def f4e_and_f(moldelt=0):
+def f4e_paracheck(moldelt=0):
     XF=[-1.2,-1.1,-1.0,-0.9,-0.85,-0.8,-0.7,-0.6,-0.55]
     cl=[]
     vm=[]
@@ -109,4 +109,30 @@ def f4e_and_f(moldelt=0):
     ax1.plot(z,w,'ko')
     plt.show()
     return
+
+def sf4fa():
+    XF=[5e-14,1e-13,2e-13]
+    GX=[-10,-9,-8]
+    col=['mo','bo','go']
+    plt.figure()
+    for a in XF:
+        for g in GX:
+            dez=plm(tt=2500,moldelt=a,two=1,gx=10**g,xt=25,xend=0,ratio=0.8)
+            #minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
+            plt.plot(g,dez[22][-1],col[XF.index(a)])
+    plt.show()
+    return
     
+def sf4fb():
+    XF=[5e-14,1e-13,5e-13]
+    rat=[0.2,0.4,0.6,0.8]
+    GX=[-10,-9,-8]
+    col=['mo','bo','go','ro']
+    plt.figure()
+    for r in rat:
+        for g in GX:
+            dez=plm(tt=500,moldelt=1e-13,two=1,gx=10**g,xt=25,xend=0,ratio=r)
+            #minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
+            plt.plot(g,dez[22][-1],col[rat.index(r)])
+    plt.show()
+    return

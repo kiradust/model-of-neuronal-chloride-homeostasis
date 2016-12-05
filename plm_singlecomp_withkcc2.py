@@ -117,8 +117,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
     dt=1e-3 #zero time, dt time step
     if p<10**(-6)/F:
         tt=30000.0
-    ts=tt/n #plotting timestep
-    tit=int(round(tt/dt)) #tt total time, tit - total number of steps 
+    ts=tt/n #plotting timestep 
     ctr=1 #counter for plotting points
     t=0 #real time
     sw=0 #switch for ATPase action 
@@ -158,7 +157,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         if paratwo==True:
             return (w*xinit)
         
-    for i in range(2,tit): #loop over time
+    while t < tt: #loop over time
         if (toff>t) and (t>ton):
             sw=0
         else:
@@ -213,9 +212,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         cl+=dcl #increment concentrations
         
         if xend==0 and (t>xt):
-            if (x*w-xinit*w1<moldelt):
+            if (np.abs(x*w-xinit*w1)<moldelt):
                 if xflux==0:
                     xtemp+=dx
+                    tt=t+100
                 else:
                     xtemp+=xflux
             else:
@@ -240,7 +240,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         xtemp=(xtemp*w)/w2
         w=w2
         t+=dt
-    
+        
     #plot if asked    
     if graph==1:
         gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
@@ -255,7 +255,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         plt.subplot(gs[2])
         plt.plot(time,W,color=wcolor,label='relative volume')
         plt.show()
-        
+    
     print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'deltx', x*w-xinit*w1
         
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K, X2, w, z_delt, xe_delt, gkcc_delt
