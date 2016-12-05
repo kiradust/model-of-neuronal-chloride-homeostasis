@@ -92,7 +92,7 @@ cle=clo
 xe1=-1*(cle-nae-ke)
 xe=xe1*0.2
 ose=xe1+cle+nae+ke
-P=range(-8000,-5000)
+P=range(-8000,-4500)
 default_p=-2.432631
 #default_p=-15.41069
 default_P=-4699.0
@@ -215,7 +215,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         if xend==0 and (t>xt):
             if (x*w-xinit*w1<moldelt):
                 if xflux==0:
-                    xtemp+=0
+                    xtemp+=dx
                 else:
                     xtemp+=xflux
             else:
@@ -285,7 +285,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
         vm.append(v)
         zi.append(nae*np.exp(-v/R-3*q/gna))
         nai.append(nae*np.exp(-v/R-3*q/gna))
-        ki.append(ke*np.exp(-v/R-2*q*(gcl+gkcc)*beta))
+        ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc)*beta))
         cli.append(cle*np.exp(+v/R-2*q*gkcc*beta))
         xi.append(ose-nai[-1]-cli[-1]-ki[-1])
         pi.append(1000.0*np.log10(F*R*q/(((nae*np.exp(-v/R-3*q/gna))/nae)**3)))
@@ -296,7 +296,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
         if molinit != 0:
-            w.append((molinit+1e-12)/xi[-1])
+            w.append((molinit)/xi[-1])
         else:
             w.append(0.155157217542/xi[-1])
     
@@ -311,32 +311,38 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
     
 def checkpara():
-    ti=[[],[],[],[],[],[],[],[],[],[],[]]
-    T=[-8000,-7000,-6000,-5500,-5000,-4500,-4000,-3000,-2000,-1000]
+    ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    T=[-6000,-5500,-5000,-4500,-4000,-3000,-2000,-1000]
+    time=200
     
     for k in T:
         q=10**(k/1000.0)/F
-        a=plm(p=q,tt=100)
-        for i in range(21):
+        if k==-6000:
+            time=2000
+        a=plm(p=q,tt=time)
+        for i in range(23):
             ti[i].append(a[i])
     
-    para=zplm(z,0,gcl)
+    molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
+    para=zplm(z,0,gcl,molinit=molinit)
     gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
     plt.subplot(gs[0])
     plt.plot(para[0],para[8],color=clcolor)
     plt.plot(para[0],para[7],color=kcolor)
     plt.plot(para[0],para[6],color=nacolor)
     plt.plot(para[0],para[9],color=xcolor)
-    plt.plot(T,ti[0],color=nacolor,linestyle='o')
-    plt.plot(T,ti[1],color=kcolor,linestyle='o')
-    plt.plot(T,ti[2],color=clcolor,linestyle='o')
-    plt.plot(T,ti[3],oolor=xcolor,linestyle='o')
+    plt.plot(T,ti[0],'ro')
+    plt.plot(T,ti[1],'go')
+    plt.plot(T,ti[2],'bo')
+    plt.plot(T,ti[3],'mo')
     plt.subplot(gs[1])
-    plt.plot(para[0],para[10],'k',T,ti[4],'ok')
+    plt.plot(para[0],para[10],'k')
+    plt.plot(T,ti[4],'ko')
     plt.subplot(gs[2])
-    plt.plot(T,ti[21],color=wcolor)
+    plt.plot(para[0],para[11],color=wcolor)
+    plt.plot(T,ti[21],'ko')
     plt.show()
-    return
+    return ti
 
 def zp(Z,p=default_P/1000.0,gkcc=gkcc,graph=0,molinit=0,moldelt=0):
     nai=[]

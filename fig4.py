@@ -74,8 +74,8 @@ def f4e(Z=range(-120,-50),moldelt=1e-12):
     a,b,c = minifigtwoaxes([Z,zee[3],zee[2],zee[5],zee[11],newx])
     return a,b,c
     
-def f4f(moldelt=1e-12):
-    dez=plm(gx=1e-8,xt=25,tt=100,two=1,xend=0,moldelt=moldelt)
+def f4f(moldelt=1e-12,ratio=0.98):
+    dez=plm(gx=1e-8,xt=25,tt=200,two=1,xend=0,moldelt=moldelt,ratio=ratio)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
     return
     
