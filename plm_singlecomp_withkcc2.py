@@ -85,19 +85,19 @@ ko=3.5e-3 #nao,clo,ko: extracellular concentrations (mM converted to M)
 z=-0.85 #intracellular (and extracellular) charge of impermeant anions
 pkcc=1.0e-8
 gamma=gna/gk
-alpha=1.0/(gk*gcl+gcl*gkcc-gk*gkcc)
-beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
+beta=1.0/(gk*gcl+gkcc*gk+gcl*gkcc)
 nae=nao
 ke=ko
 cle=clo
 xe1=-1*(cle-nae-ke)
-xe=xe1/2.0
+xe=xe1*0.2
 ose=xe1+cle+nae+ke
-P=range(-7000,-4600)
+P=range(-8000,-5000)
 default_p=-2.432631
+#default_p=-15.41069
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=10000,ratio=0.98,xend=51,osmofix=False,paratwo=False,moldelt=1e-12):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=10000,ratio=0.98,xend=51,osmofix=False,paratwo=False,moldelt=1e-12,xflux=0,z=z):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -134,7 +134,6 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
     #cl=((os_init-na-k)*z+na+k)/(1+z)
     cl=clinit
     #x=(cl-na-k)/z #na,k,cl,x: intracellular starting concentrations
-    z=-0.85
     k=k_init
         
     if osmofix==True:
@@ -208,25 +207,28 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw) 
         dk=-dt*Ar*(gk*(V-R*np.log(ke/k))-ck*jp*sw-jkcc2)
         dcl=dt*Ar*(gcl*(V+R*np.log(cle/cl))+jkcc2) #dna,dk,dcl: increase in intracellular ion conc during time step dt
-        dx=-dt*Ar*(gx*(V-R/zx*np.log(xe/(xtemp))))
+        dx=-dt*Ar*zx*(gx*(V-R/zx*np.log(xe/(xtemp))))
         na+=dna
         k+=dk
         cl+=dcl #increment concentrations
         
         if xend==0 and (t>xt):
             if (x*w-xinit*w1<moldelt):
-                xtemp+=dx
+                if xflux==0:
+                    xtemp+=0
+                else:
+                    xtemp+=xflux
             else:
                 print 'anions stopped diffusing at '+str(t)
                 xend=1
                 
         if xt+xend>t>xt:
             xtemp+=dx 
-            print "no"
+            
         #update volume
         x=xm+xtemp
         osi=na+k+cl+x #intracellular osmolarity 
-        ose=nae+ke+cle+xe+xe1/2.0
+        ose=nae+ke+cle+xe+xe1*0.8
         w2=(w*osi)/ose #update volume 
         
         #correct ionic concentrations by volume change
@@ -272,7 +274,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     exi=[]
     ev=[]
     w=[]
-    beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
+    #beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
     for p in P:
         q=10**(p/1000.0)/(F*R)
         if z==-1:
@@ -283,7 +285,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
         vm.append(v)
         zi.append(nae*np.exp(-v/R-3*q/gna))
         nai.append(nae*np.exp(-v/R-3*q/gna))
-        ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc)*beta))
+        ki.append(ke*np.exp(-v/R-2*q*(gcl+gkcc)*beta))
         cli.append(cle*np.exp(+v/R-2*q*gkcc*beta))
         xi.append(ose-nai[-1]-cli[-1]-ki[-1])
         pi.append(1000.0*np.log10(F*R*q/(((nae*np.exp(-v/R-3*q/gna))/nae)**3)))
@@ -297,6 +299,14 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
             w.append((molinit+1e-12)/xi[-1])
         else:
             w.append(0.155157217542/xi[-1])
+    
+    plt.figure()
+    plt.plot(pi,ecl,color=clcolor)
+    plt.plot(pi,ek,color=kcolor)
+    plt.plot(pi,ena,color=nacolor)
+    plt.plot(pi,xi,color=xcolor)
+    plt.plot(pi,ev,'k--')
+    plt.show()
     
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
     
@@ -328,13 +338,12 @@ def checkpara():
     plt.show()
     return
 
-def zp(Z,p=default_P/1000.0,gkcc=pkcc,graph=0,molinit=0,moldelt=0):
+def zp(Z,p=default_P/1000.0,gkcc=gkcc,graph=0,molinit=0,moldelt=0):
     nai=[]
     ki=[]
     cli=[]
     xi=[]
     vm=[]
-    zi=[]
     pi=[]
     ena=[]
     ek=[]
@@ -353,12 +362,11 @@ def zp(Z,p=default_P/1000.0,gkcc=pkcc,graph=0,molinit=0,moldelt=0):
             theta=(-z*ose+np.sqrt(z**2*ose**2+4*(1-z**2)*cle*np.exp(-2*q*gkcc*beta)*(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))))/(2*(1-z)*((nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))))    
         v=(-np.log(theta))*R
         vm.append(v)
-        zi.append(nae*np.exp(-v/R-3*q/gna))
         nai.append(nae*np.exp(-v/R-3*q/gna))
         ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc)*beta))
         cli.append(cle*np.exp(+v/R-2*q*gkcc*beta))
         xi.append(ose-nai[-1]-cli[-1]-ki[-1])
-        pi.append(np.log10(F*R*q/(((nae*np.exp(-v/R-3*q/gna))/nae)**3)))
+        pi.append(np.log10(F*R*q/(((np.exp(-v/R-3*q/gna)))**3)))
         
         ek.append(1000*R*np.log(ke/ki[-1]))
         ena.append(1000*R*np.log(nae/nai[-1]))

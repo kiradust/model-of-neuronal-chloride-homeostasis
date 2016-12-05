@@ -16,13 +16,13 @@
 We want to find analytical solutions at steady state for the following variables: intracellular concentrations of sodium, potassium, chloride and impermeable anions ($Na_i, K_i, Cl_i$ and $X$, with charge $z$); membrane voltage ($V$). The steady state should occur in the presence of both a pump leak mechanism (sodium-potassium ATPase with pump rate modified by the sodium gradient, $P=p\cdot\Big(\frac{Na_i}{Na_e}\Big)^3$) and chloride-potassium extrusion (type 2 potassium-chloride co-transporter, KCC2, subject to some constant conductance $g_{KCC}$ and the reversal potentials of potassium and chloride (see Doyon et al., 2016)), while taking into account the usual passive forces across the membrane on each ion. Thus it ought to satisfy the following five equations:
 
 \begin{equation} \label{na}
-\frac{dI_{Na}}{dt} =0= g_{Na}(V-E_{Na})-3P
+\frac{dI_{Na}}{dt} =0= -g_{Na}(V-E_{Na})-3P
 \end{equation}
 \begin{equation} \label{k}
-\frac{dI_{K}}{dt} =0= g_K(V-E_{Na})+2P-g_{KCC}(E_K-E_{Cl})
+\frac{dI_{K}}{dt} =0= -g_K(V-E_{Na})+2P+g_{KCC}(E_K-E_{Cl})
 \end{equation}
 \begin{equation} \label{cl}
-\frac{dI_{Cl}}{dt} =0= g_{Cl}(V-E_{Cl})-g_{KCC}(E_K-E_{Cl})
+\frac{dI_{Cl}}{dt} =0= g_{Cl}(V-E_{Cl})+g_{KCC}(E_K-E_{Cl})
 \end{equation}
 \begin{equation} \label{in}
 0=K_i+Na_i-Cl_i+zX
@@ -43,7 +43,7 @@ and
 E_{Cl} = \frac{g_{Cl}V+g_{KCC}E_K}{g_{Cl}+g_{KCC}}
 \end{equation}
 
-Let $\beta$ be equal to $g_Kg_{Cl}-g_{KCC}g_{Cl}+g_Kg_{KCC}$. If we substitute \eqref{ecl} into \eqref{k} for $E_{Cl}$, we can solve for $E_K$ and $K_i$, hence enabling us to substitute back into \eqref{ecl} in order to solve for $Cl_i$.
+Let $\beta$ be equal to $g_Kg_{Cl}+g_{KCC}g_{Cl}+g_Kg_{KCC}$. If we substitute \eqref{ecl} into \eqref{k} for $E_{Cl}$, we can solve for $E_K$ and $K_i$, hence enabling us to substitute back into \eqref{ecl} in order to solve for $Cl_i$.
 
 Thus,
 

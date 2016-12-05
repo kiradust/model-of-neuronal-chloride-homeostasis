@@ -36,8 +36,8 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10]):
         gna=Gna[i]*1.0e-10
         gk=Gk[i]*1.0e-9
         gcl=Gcl[i]*1.0e-9
-        if gk*gcl-gkcc*gcl+gk*gkcc !=0:
-            beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
+        if gk*gcl+gkcc*gcl+gk*gkcc !=0:
+            beta=1.0/(gk*gcl+gkcc*gcl+gk*gkcc)
         else:
             print "yep"
         

@@ -61,7 +61,7 @@ def minifigtwoaxes(delta):
     ax1.plot(delta[0],delta[4],color=wcolor,clip_on=False)
     ax2=ax1.twinx()
     ax2.plot(delta[0],delta[5],color=xcolor,clip_on=False)
-    return
+    return ax0, ax1, ax2
     
 def minithreefig(delta,colour):
     plt.figure()
