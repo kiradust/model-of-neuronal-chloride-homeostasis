@@ -97,7 +97,7 @@ default_p=-2.432631
 #default_p=-15.41069
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=10000,ratio=0.98,xend=51,osmofix=False,paratwo=False,moldelt=1e-12,xflux=0,z=z):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=10000,ratio=0.98,xend=51,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z):
     #create plotting arrays
     Vm=[]
     K=[]
