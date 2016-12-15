@@ -74,40 +74,9 @@ def f4e(Z=range(-120,-50),moldelt=1e-12):
     a,b,c = minifigtwoaxes([Z,zee[3],zee[2],zee[5],zee[11],newx])
     return a,b,c
     
-def f4f(ratio=0.8,md=1e-13):
-    dez=plm(gx=1e-8,xt=25,tt=200,two=1,xend=0,moldelt=md,ratio=ratio)
-    minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
-    return
-    
 def f4d(f=1e-3):
     dxe=plm(graph=1,gx=0,xt=25,two=0,tt=100,f4d=f)
     minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],'k')
-    return
-    
-def f4e_paracheck(moldelt=0):
-    XF=[-1.2,-1.1,-1.0,-0.9,-0.85,-0.8,-0.7,-0.6,-0.55]
-    cl=[]
-    vm=[]
-    k=[]
-    w=[]
-    z=[]
-    x=[]
-    for a in XF:
-        dez=plm(tt=200,z=a)
-        #minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
-        cl.append(dez[7])
-        k.append(dez[6])
-        vm.append(dez[9])
-        w.append(dez[10][-1])
-        z.append(dez[22][-1]*100)
-        x.append(dez[3])
-    ax0, ax1, ax2 = f4e(moldelt=moldelt)
-    ax0.plot(z,cl,'bo')
-    ax0.plot(z,k,'go')
-    ax0.plot(z,vm,'ko')
-    ax2.plot(z,x,'mo')
-    ax1.plot(z,w,'ko')
-    plt.show()
     return
 
 def sf4fa():
