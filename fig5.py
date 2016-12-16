@@ -58,13 +58,13 @@ def f5d():
     w=[[],[],[],[]]
     z=[[],[],[],[]]
     ZX=[-0.5,-1,-2,-3]
-    ZT=[-0.6,-0.85,-1,-1.5,-2.0,-2.5]
+    ZT=[-0.5,-0.55,-0.6,-0.85,-0.9,-0.95,-1,-1.5,-1.75,-1.9,-2.0,-2.5,-2.75,-2.9,-3.0]
     plt.figure()
     for a in ZX:
         for b in ZT:
             dez=plm(xend=0,two=1,xt=10,xflux=5e-6,ztarget=b,Zx=a,moldelt=1)
             #minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
-            w[abs(int(a))].append(np.log10(dez[10][-1]))
+            w[abs(int(a))].append((dez[10][-1]))
             z[abs(int(a))].append(dez[22][-1])
         plt.plot(z[abs(int(a))],w[abs(int(a))],sym[abs(int(a))]+'o')
     plt.show()

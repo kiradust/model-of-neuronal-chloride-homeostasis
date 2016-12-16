@@ -216,12 +216,13 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         cl+=dcl #increment concentrations
         
         if xend==0 and (t>xt):
-            if (np.abs(x*w-xinit*w1)<moldelt) and (abs((np.abs(z)-np.abs(ztarget)))>0.001):
+            if (np.abs(x*w-xinit*w1)<moldelt) and (abs((np.abs(z)-np.abs(ztarget)))>0.001) and (min(z,zx)<=ztarget<=max(z,zx)):
                 if xflux==0:
                     xtemp+=dx
                     tt=t+100
                 else:
                     xtemp+=xflux
+                    tt=t+50
             else:
                 print 'anions stopped diffusing at '+str(t)
                 xend=1
