@@ -62,9 +62,9 @@ def f5d():
     plt.figure()
     for a in ZX:
         for b in ZT:
-            dez=plm(xend=0,two=1,xt=10,xflux=5e-6,ztarget=b,Zx=a,moldelt=1)
+            dez=plm(xend=0,two=1,xt=10,xflux=5e-6,ztarget=b,Zx=a,moldelt=1,ratio=0.1)
             #minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
-            w[abs(int(a))].append((dez[10][-1]))
+            w[abs(int(a))].append(np.log10(dez[10][-1]))
             z[abs(int(a))].append(dez[22][-1])
         plt.plot(z[abs(int(a))],w[abs(int(a))],sym[abs(int(a))]+'o')
     plt.show()

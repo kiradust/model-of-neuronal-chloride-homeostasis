@@ -145,6 +145,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
         k=cl-z*x-na
     print "k_init: "+str(k)
     print "ose: "+str(k+cl+x+na)
+    print "z_aim: "+str(ztarget) +" with zflux of "+str(Zx)
     xm=x*ratio
     xtemp=x*(1-ratio)
     zxm=z
@@ -224,8 +225,16 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
                     xtemp+=xflux
                     tt=t+50
             else:
-                print 'anions stopped diffusing at '+str(t)
-                xend=1
+                if (min(z,zx)<=ztarget<=max(z,zx)):
+                    print 'anions stopped diffusing at '+str(t)
+                    xend=1
+                else:
+                    if xflux!=0 and tt<1000 and xtemp>0 and (min(zxm,zx)<=ztarget<=max(zxm,zx)):
+                        xtemp-=xflux
+                        tt=t+50
+                    else:
+                        print 'anions stopped diffusing at '+str(t)
+                        xend=1
                 
         if xt+xend>t>xt:
             xtemp+=dx 
