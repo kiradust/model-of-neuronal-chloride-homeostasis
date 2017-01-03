@@ -17,7 +17,7 @@ sym=['-',':','--','-.']
 def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):   
     plt.figure()
     for i in range(len(init_x)):
-        endcl=plm(xinit=init_x[i],tt=50, k_init=0,osmofix=True)
+        endcl=plm(xinit=init_x[i],tt=100, k_init=0,osmofix=True)
         plt.subplot(2,1,1)
         plt.plot(endcl[11][1:-1],endcl[20][1:-1],'m'+sym[i])
         plt.subplot(2,1,2)
@@ -44,7 +44,7 @@ def f4b(init_x=range(1,251,19)):
     
     return
     
-def f4c(gX=1e-8,tt=100,xt=25,ratio=0.98):
+def f4c(gX=1e-8,tt=100,xt=25,ratio=0.02):
     dex=plm(gx=gX,xt=xt,tt=tt,ratio=ratio)
     minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
     return
@@ -74,7 +74,7 @@ def f4e(Z=range(-120,-50),moldelt=1e-12):
     a,b,c = minifigtwoaxes([Z,zee[3],zee[2],zee[5],zee[11],newx])
     return a,b,c
     
-def f4d(f=1e-3):
+def f4d(f=2e-3):
     dxe=plm(graph=1,gx=0,xt=25,two=0,tt=100,f4d=f)
     minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],'k')
     return
