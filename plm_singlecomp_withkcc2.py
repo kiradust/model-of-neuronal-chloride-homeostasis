@@ -115,8 +115,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
     gkcc_delt=[]
     
     dt=1e-3 #zero time, dt time step
-    if p<10**(-6)/F:
-        tt=30000.0
+    if p<10**(-4.5)/F:
+        tt=10000.0
     ts=tt/n #plotting timestep 
     ctr=1 #counter for plotting points
     t=0 #real time
@@ -326,13 +326,11 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     
 def checkpara():
     ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-    T=[-6000,-5500,-5000,-4500,-4000,-3000,-2000,-1000]
+    T=[-8000,-7000,-6000,-5500,-5000,-4500,-4000,-3000,-2000,-1000]
     time=200
     
     for k in T:
         q=10**(k/1000.0)/F
-        if k==-6000:
-            time=2000
         a=plm(p=q,tt=time)
         for i in range(23):
             ti[i].append(a[i])

@@ -12,7 +12,7 @@ import numpy as np
 from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
 
-def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10]):
+def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10],molinit=0):
     vm=[]
     cli=[]
     nai=[]
@@ -36,6 +36,7 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10]):
         gna=Gna[i]*1.0e-10
         gk=Gk[i]*1.0e-9
         gcl=Gcl[i]*1.0e-9
+        molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
         if gk*gcl+gkcc*gcl+gk*gkcc !=0:
             beta=1.0/(gk*gcl+gkcc*gcl+gk*gkcc)
         else:
@@ -51,7 +52,7 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10]):
         ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc)*beta))
         cli.append(cle*np.exp(+v/R-2*q*gkcc*beta))
         xi.append(ose-nai[-1]-cli[-1]-ki[-1])
-        w.append(0.155157217542/xi[-1])
+        w.append((molinit)/xi[-1])
         
         ek.append(1000*R*np.log(ke/ki[-1]))
         ena.append(1000*R*np.log(nae/nai[-1]))
