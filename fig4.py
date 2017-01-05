@@ -44,8 +44,8 @@ def f4b(init_x=range(1,251,19)):
     
     return
     
-def f4c(gX=1e-8,tt=100,xt=25,ratio=0.02):
-    dex=plm(gx=gX,xt=xt,tt=tt,ratio=ratio)
+def f4c(gX=1e-8,tt=100,xt=25,xflux=5e-6):
+    dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux)
     minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
     return
     

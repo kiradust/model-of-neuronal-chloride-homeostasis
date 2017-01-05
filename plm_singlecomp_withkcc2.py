@@ -237,7 +237,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
                         xend=1
                 
         if xt+xend>t>xt:
-            xtemp+=dx 
+            if xflux!=0:
+                xtemp+=xflux
+            else:
+                xtemp+=dx 
             
         #update volume
         x=xm+xtemp
