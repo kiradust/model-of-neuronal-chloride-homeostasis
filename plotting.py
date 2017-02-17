@@ -11,9 +11,9 @@ import etframes
 rcParams['figure.figsize'] = 8,8
 
 clcolor='#2095e7'
-kcolor='#53b29d'
+kcolor='#f27a29'
 xcolor='m'
-nacolor='#f27a29'
+nacolor='#53b29d'
 wcolor='#aaaaaa'
 
 ys = [1,1.5,2,2.5,5]
