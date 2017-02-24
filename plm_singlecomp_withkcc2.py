@@ -77,8 +77,8 @@ gcl=1e-8 #gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - cor
 gkcc=1e-8 #1 is 'high' (Doyon) - use Chris's?
 ck=2
 cna=3 #cna,ck: pump (ATPase) stoichiometries
-rad=5*1e-5 #radius in um convert to dm
-length=100*1e-5 #length in um converted to dm
+rad=0.5*1e-5 #radius in um convert to dm
+length=130*1e-5 #length in um converted to dm
 nao=145e-3
 clo=119e-3
 ko=3.5e-3 #nao,clo,ko: extracellular concentrations (mM converted to M)
@@ -97,7 +97,7 @@ default_p=-2.432631
 #default_p=-15.41069
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clinit=4.34333e-3,toff=15000,ton=15000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=10000,ratio=0.98,xend=51,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=100000,ratio=0.98,xend=51,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -125,6 +125,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=10000,os_init=ose,clin
     w=np.pi*rad**2*length #initial volume in liters
     w1=w #initial volume stored for graphing later
     Ar=4e6 #area constant (F and H method)
+    Ar=2.0/rad
     C=7e-6 #capacitance (F/dm^2)
     FinvCAr=F/(C*Ar) #(F/C*area scaling constant)
     
@@ -414,7 +415,7 @@ def zp(Z,p=default_P/1000.0,gkcc=gkcc,graph=0,molinit=0,moldelt=0):
         plt.xlabel('100.z')
         plt.ylabel('mV')    
         plt.show()
-    return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
+    return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w, z
 
 def kcc2p(G,p=default_P,z=-0.85):
     nai=[]

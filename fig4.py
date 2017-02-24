@@ -17,7 +17,7 @@ sym=['-',':','--','-.']
 def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):   
     plt.figure()
     for i in range(len(init_x)):
-        endcl=plm(xinit=init_x[i],tt=100, k_init=0,osmofix=True)
+        endcl=plm(xinit=init_x[i],tt=1000, k_init=0,osmofix=True)
         plt.subplot(2,1,1)
         plt.plot(endcl[11][1:-1],endcl[20][1:-1],'m'+sym[i])
         plt.subplot(2,1,2)
@@ -33,7 +33,7 @@ def f4b(init_x=range(1,251,19)):
     endw =[]
     
     for i in init_x:
-        end=plm(xinit=i)
+        end=plm(xinit=i,tt=1000)
         endv.append(end[9])
         endk.append(end[6])
         endcl.append(end[7])
@@ -44,7 +44,7 @@ def f4b(init_x=range(1,251,19)):
     
     return
     
-def f4c(gX=1e-8,tt=100,xt=25,xflux=5e-6):
+def f4c(gX=1e-8,tt=200,xt=20,xflux=5e-7):
     dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux)
     minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
     return
@@ -65,17 +65,17 @@ def sf4c(GX=[5e-10,1e-9,5e-9,7e-9,1e-8,2e-8],tt=600,xt=25,ratio=0.98,xend=0):
     twoaxes(GX,deltecl,maxdeltecl,deltx,deltw)
     return
     
-def f4e(Z=range(-120,-50),moldelt=1e-12):
+def f4e(Z=range(-120,-49),moldelt=1e-12):
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=moldelt)
     zee=zp(Z=Z,molinit=molinit,moldelt=moldelt)
     newx=[]
     for i in zee[9]:
         newx.append(i)
     a,b,c = minifigtwoaxes([Z,zee[3],zee[2],zee[5],zee[11],newx])
-    return a,b,c
+    return a,b,c,zee[0], Z
     
 def f4d(f=2e-3):
-    dxe=plm(graph=1,gx=0,xt=25,two=0,tt=100,f4d=f)
+    dxe=plm(graph=1,gx=0,xt=20,two=0,tt=200,f4d=f)
     minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],'k')
     return
 
