@@ -5,6 +5,7 @@ from pylab import rcParams
 from fig4 import f4e
 import numpy as np
 rcParams['figure.figsize'] = 8,8
+from matplotlib import gridspec
 
 sym=['-b',':r','--g','-.m']
 
@@ -22,7 +23,7 @@ def f5b(moldelt=0):
     w=[]
     z=[]
     x=[]
-    ax0, ax1, ax2, pi, zi = f4e(moldelt=moldelt)
+    ax0, ax1, ax2, pi, zi, zee, newx = f4e(moldelt=moldelt)
     
     for i in range(len(zi)):
         for b in XF:
@@ -38,17 +39,34 @@ def f5b(moldelt=0):
         w.append(dez[10][-1])
         z.append(dez[22][-1]*100)
         x.append(dez[3])
-    ax0, ax1, ax2, pi, zi = f4e(moldelt=moldelt)
+    ax0, ax1, ax2, pi, zi, zee, newx = f4e(moldelt=moldelt)
     ax0.plot(z,cl,'bo')
     ax0.plot(z,k,'go')
     ax0.plot(z,vm,'ko')
     ax2.plot(z,x,'mo')
     ax1.plot(z,w,'ko')
     plt.show()
+    
+    plt.figure()
+    gs = gridspec.GridSpec(3,1,height_ratios=[1.5,0.5,0.5])
+    plt.subplot(gs[0])
+    plt.plot(zi,zee[3],color=clcolor)
+    plt.plot(z,cl,'bo')
+    plt.plot(z,k,'go')
+    plt.plot(z,vm,'ko')
+    plt.plot(zi,zee[2],color=kcolor)
+    plt.plot(zi,zee[5],'k')
+    plt.subplot(gs[1])
+    plt.plot(zi,zee[11],color='k') #vol
+    plt.plot(z,w,'ko')
+    plt.subplot(gs[2])
+    plt.plot(zi,newx,color='m') #conc X
+    plt.plot(z,x,'mo')
+    plt.show()
     return
 
 def f5c(ratio=0.8,md=1e-12):
-    dez=plm(gx=1e-8,xt=20,two=1,xend=0,moldelt=md,ratio=ratio,xflux=1*1e-6,ztarget=-1,tt=180)
+    dez=plm(gx=1e-8,xt=20,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-0.9,tt=300)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
     return
 
@@ -60,7 +78,7 @@ def f5d():
     plt.figure()
     for a in ZX:
         for b in ZT:
-            dez=plm(xend=0,two=1,xt=10,xflux=5e-6,ztarget=b,Zx=a,moldelt=1,ratio=0.1)
+            dez=plm(xend=0,two=1,xt=10,xflux=1e-6,ztarget=b,Zx=a,moldelt=1,ratio=0.1)
             #minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
             w[abs(int(a))].append(np.log10(dez[10][-1]))
             z[abs(int(a))].append(dez[22][-1])

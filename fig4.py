@@ -84,7 +84,7 @@ def f4e(Z=range(-120,-49),moldelt=1e-12):
     for i in zee[9]:
         newx.append(i)
     a,b,c = minifigtwoaxes([Z,zee[3],zee[2],zee[5],zee[11],newx])
-    return a,b,c,zee[0], Z
+    return a,b,c,zee[0], Z,zee,newx
     
 def f4d(f=2e-3):
     dxe=plm(graph=1,gx=0,xt=30,two=0,tt=180,f4d=f)
