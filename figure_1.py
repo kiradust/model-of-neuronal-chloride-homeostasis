@@ -17,7 +17,7 @@ def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3]):
     leg=[]    
     plt.figure()
     for i in range(len(init_cl)):
-        endcl=plm(clinit=init_cl[i],tt=50,osmofix=False)
+        endcl=plm(clinit=init_cl[i],tt=300,osmofix=False)
         plt.subplot(2,1,1)
         plt.plot(endcl[11],endcl[17],color=clcolor,linestyle=sym[i])
         plt.subplot(2,1,2)
@@ -28,7 +28,7 @@ def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3]):
     return
         
 def f1c():
-    offpump=plm(graph=1,ton=150,toff=350,tt=500)
+    offpump=plm(graph=1,ton=3000,toff=9000,tt=12000)
     return
     
 def f1d():

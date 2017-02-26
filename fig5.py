@@ -9,7 +9,7 @@ rcParams['figure.figsize'] = 8,8
 sym=['-b',':r','--g','-.m']
 
 def f5a():
-    dez=plm(dz=2e-6,two=1,xt=20,tt=200)
+    dez=plm(dz=1e-6,two=1,xt=30,tt=180)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
     return
 
@@ -48,7 +48,7 @@ def f5b(moldelt=0):
     return
 
 def f5c(ratio=0.8,md=1e-12):
-    dez=plm(gx=1e-8,xt=20,two=1,xend=0,moldelt=md,ratio=ratio,xflux=1*1e-6,ztarget=-1,tt=1000)
+    dez=plm(gx=1e-8,xt=20,two=1,xend=0,moldelt=md,ratio=ratio,xflux=1*1e-6,ztarget=-1,tt=180)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
     return
 

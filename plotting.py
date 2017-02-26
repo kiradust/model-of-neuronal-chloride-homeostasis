@@ -6,8 +6,7 @@ Created on Sun Nov 06 13:34:52 2016
 """
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-from pylab import *
-import etframes
+from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
 
 clcolor='#2095e7'

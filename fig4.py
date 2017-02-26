@@ -8,6 +8,7 @@ Created on Wed Sep 28 17:29:22 2016
 from plm_singlecomp_withkcc2 import plm, zp
 from plotting import minifig, minithreefig, minifigtwoaxes,twoaxes,xcolor,clcolor,wcolor,kcolor
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 from pylab import rcParams
 import numpy as np
 rcParams['figure.figsize'] = 8,8
@@ -17,7 +18,7 @@ sym=['-',':','--','-.']
 def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):   
     plt.figure()
     for i in range(len(init_x)):
-        endcl=plm(xinit=init_x[i],tt=1000, k_init=0,osmofix=True)
+        endcl=plm(xinit=init_x[i],tt=600, k_init=0,osmofix=True)
         plt.subplot(2,1,1)
         plt.plot(endcl[11][1:-1],endcl[20][1:-1],'m'+sym[i])
         plt.subplot(2,1,2)
@@ -38,13 +39,24 @@ def f4b(init_x=range(1,251,19)):
         endk.append(end[6])
         endcl.append(end[7])
         endw.append(end[21])
-
+    plt.figure()
+    gs = gridspec.GridSpec(2, 1, height_ratios=[1.5, 1]) 
+    plt.subplot(gs[0])
+    plt.plot(init_x,endcl,color=clcolor)
+    plt.plot(init_x,endcl,'bo')
+    plt.plot(init_x,endk,color=kcolor)
+    plt.plot(init_x,endk,'ro')
+    plt.plot(init_x,endv,'k')
+    plt.plot(init_x,endv,'ko')
+    plt.subplot(gs[1])
+    plt.plot(init_x,endw,color=wcolor)
+    plt.plot(init_x,endw,'ko')
     minifig([init_x,endcl,endk,[],[],endv,endw])
     plt.show()
     
     return
     
-def f4c(gX=1e-8,tt=200,xt=20,xflux=5e-7):
+def f4c(gX=1e-8,tt=180,xt=30,xflux=5e-7):
     dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux)
     minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
     return
@@ -75,7 +87,7 @@ def f4e(Z=range(-120,-49),moldelt=1e-12):
     return a,b,c,zee[0], Z
     
 def f4d(f=2e-3):
-    dxe=plm(graph=1,gx=0,xt=20,two=0,tt=200,f4d=f)
+    dxe=plm(graph=1,gx=0,xt=30,two=0,tt=180,f4d=f)
     minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],'k')
     return
 

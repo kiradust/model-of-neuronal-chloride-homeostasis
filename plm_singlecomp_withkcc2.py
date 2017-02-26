@@ -97,7 +97,7 @@ default_p=-2.432631
 #default_p=-15.41069
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=100000,ratio=0.98,xend=51,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -115,7 +115,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     gkcc_delt=[]
     
     dt=1e-3 #zero time, dt time step
-    if p<10**(-4.5)/F:
+    if p<10**(-5.6)/F:
+        tt=30000.0
+    elif 10**(-5.6)/F<p<10**(-3.9)/F:
         tt=10000.0
     ts=tt/n #plotting timestep 
     ctr=1 #counter for plotting points
@@ -224,7 +226,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                     tt=t+100
                 else:
                     xtemp+=xflux
-                    tt=t+50
+                    tt=t+100
             else:
                 if (min(z,zx)<=ztarget<=max(z,zx)):
                     print 'anions stopped diffusing at '+str(t)
@@ -330,7 +332,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     
 def checkpara():
     ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-    T=[-8000,-7000,-6000,-5500,-5000,-4500,-4000,-3000,-2000,-1000]
+    T=[-8000,-7000,-6000,-5000,-4000,-3000,-2000,-1000,0]
     time=200
     
     for k in T:

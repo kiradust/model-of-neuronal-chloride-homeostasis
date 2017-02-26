@@ -75,7 +75,7 @@ def f2a():
     return
     
 def f3a():
-    dg=plm(tk=25,tt=100)
+    dg=plm(tk=30,tt=150)
     minithreefig([dg[11][1:-1],dg[14][1:-1],dg[13][1:-1],dg[16][1:-1],dg[10][1:-1],dg[24][1:-1]],'k')
     plt.show()
     return
@@ -86,7 +86,8 @@ def f3c():
     return
     
 def f3b():
-    gp=zplm()
+    molint=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
+    gp=zplm(molinit=molint)
     minifig([gp[0],gp[3],gp[2],[],[],gp[5],gp[11]])
     plt.show()
     return
