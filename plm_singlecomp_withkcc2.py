@@ -116,8 +116,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     
     dt=1e-3 #zero time, dt time step
     if p<10**(-5.6)/F:
-        tt=30000.0
-    elif 10**(-5.6)/F<p<10**(-3.9)/F:
+        tt=60000.0
+    elif 10**(-5.6)/F<p<10**(-3.4)/F:
         tt=10000.0
     ts=tt/n #plotting timestep 
     ctr=1 #counter for plotting points
@@ -203,6 +203,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             xe_delt.append(xe)
             gkcc_delt.append(pkcc)
             ctr+=1
+            
+        #if K[-1]>-1 or Na[-1]<1 or Cl[-1]>-1:
+            #print t
         
         jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
         
@@ -332,7 +335,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     
 def checkpara():
     ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-    T=[-8000,-7000,-6000,-5000,-4000,-3000,-2000,-1000,0]
+    T=[-8000,-7000,-6000,-5500,-5000,-4500,-4000,-3000,-2000,-1000,0]
     time=200
     
     for k in T:
@@ -342,7 +345,7 @@ def checkpara():
             ti[i].append(a[i])
     
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
-    para=zplm(z,0,gcl,molinit=molinit)
+    para=zplm(molinit=molinit)
     gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
     plt.subplot(gs[0])
     plt.plot(para[0],para[8],color=clcolor)

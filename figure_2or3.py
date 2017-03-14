@@ -24,6 +24,7 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10],molinit=0):
     ev=[]
     exi=[]
     ena=[]
+    df=[]
     chosen=[]
     q=10**(default_P/1000.0)/(R*F)
     for i in range(max(len(Gcl),len(Gkcc),len(Gk),len(Gna))):
@@ -59,8 +60,9 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10],molinit=0):
         ecl.append(1000*R*np.log(cli[-1]/cle))
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
+        df.append(ev[-1]-ecl[-1])
     
-    return chosen,ecl,ek,ena,exi,ev,w
+    return chosen,ecl,ek,ena,df,ev,w
 
 def f2a():
     minifig(delta_gs(Gk=range(10,400),Gna=[50],Gkcc=[10],Gcl=[10]))
@@ -81,7 +83,8 @@ def f3a():
     return
     
 def f3c():
-    minifig(delta_gs(Gkcc=range(0,400),Gna=[50],Gk=[50],Gcl=[10]))
+    dg=delta_gs(Gkcc=range(0,400),Gna=[50],Gk=[50],Gcl=[10])
+    minithreefig([dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k')
     plt.show()
     return
     

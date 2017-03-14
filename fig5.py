@@ -23,6 +23,7 @@ def f5b(moldelt=0):
     w=[]
     z=[]
     x=[]
+    df=[]
     ax0, ax1, ax2, pi, zi, zee, newx = f4e(moldelt=moldelt)
     
     for i in range(len(zi)):
@@ -39,6 +40,7 @@ def f5b(moldelt=0):
         w.append(dez[10][-1])
         z.append(dez[22][-1]*100)
         x.append(dez[3])
+        df.append(dez[9]-dez[7])
     ax0, ax1, ax2, pi, zi, zee, newx = f4e(moldelt=moldelt)
     ax0.plot(z,cl,'bo')
     ax0.plot(z,k,'go')
@@ -62,6 +64,10 @@ def f5b(moldelt=0):
     plt.subplot(gs[2])
     plt.plot(zi,newx,color='m') #conc X
     plt.plot(z,x,'mo')
+    plt.show()
+    
+    plt.figure()
+    plt.plot(z,df)
     plt.show()
     return
 
