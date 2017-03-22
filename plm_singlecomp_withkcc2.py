@@ -97,7 +97,7 @@ default_p=-2.432631
 #default_p=-15.41069
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=200,k_init=0,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=0,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -164,10 +164,11 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     while t < tt: #loop over time
         if (toff>t) and (t>ton):
             sw=0
+        elif toff+200>t>toff:
+            sw=1     #control switch
+            #jp=p
         else:
             sw=1
-        if t>toff:
-            sw=1     #control switch
             
         if tk+51>t>tk:
             pkcc += 5e-12    #control switch for gkkc ramp
@@ -208,6 +209,18 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             #print t
         
         jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
+        if na>=(nao-0.0005) and t > ton:
+            print t
+            print "Na"
+            #jp=p
+        
+        if k<=(ko+0.0005) and t > ton:
+            print t
+            print "K"
+        
+        if cl>=(clo-0.0005) and t > ton:
+            print t
+            print cl
         
         #kcc2
         #jkcc2=sw*(gk*pkcc*(k*clo-k*cl)) #Fraser and Huang
