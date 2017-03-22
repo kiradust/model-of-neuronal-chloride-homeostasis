@@ -209,16 +209,16 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             #print t
         
         jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
-        if na>=(nao-0.0005) and t > ton:
+        if na>=(nao-0.0005) and t > toff:
             print t
             print "Na"
             #jp=p
         
-        if k<=(ko+0.0005) and t > ton:
+        if k<=(ko+0.0005) and t > toff:
             print t
             print "K"
         
-        if cl>=(clo-0.0005) and t > ton:
+        if cl>=(clo-0.0005) and t > toff:
             print t
             print cl
         
