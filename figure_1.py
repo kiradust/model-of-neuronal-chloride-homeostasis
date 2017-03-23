@@ -5,7 +5,7 @@ Created on Tue Sep 27 11:48:58 2016
 @author: Kira
 @title: Figure 1
 """
-from plm_singlecomp_withkcc2 import plm, checkpara
+from plm_singlecomp_withkcc2 import plm, checkpara, F
 from plotting import clcolor
 import matplotlib.pyplot as plt
 from pylab import rcParams
@@ -28,7 +28,7 @@ def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3]):
     return
         
 def f1c():
-    offpump=plm(graph=1,ton=3000,toff=9000,tt=12000)
+    offpump=plm(graph=1,ton=1000,toff=7000,tt=8000)
     return
     
 def f1d():

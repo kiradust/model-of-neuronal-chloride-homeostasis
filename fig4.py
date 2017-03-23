@@ -27,14 +27,14 @@ def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):
     
     return
     
-def f4b(init_x=range(1,251,19)):
+def f4b(init_x=range(25,586,40)):
     endv=[]
     endk=[]
     endcl=[]
     endw =[]
     
     for i in init_x:
-        end=plm(xinit=i,tt=1000)
+        end=plm(xinit=i*1e-3,tt=1000)
         endv.append(end[9])
         endk.append(end[6])
         endcl.append(end[7])
