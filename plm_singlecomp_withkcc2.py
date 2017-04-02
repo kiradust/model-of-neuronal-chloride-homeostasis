@@ -73,8 +73,7 @@ F=96485.0 #R (RT/F) in Volts, where F is Faraday's constant in C/mol
 n=200 #points to plot 
 gna=5e-9
 gk=5e-8
-gcl=1e-8 #
-#gcl=1e-7 #gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
+gcl=1e-8 #gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
 gkcc=1e-8 #1 is 'high' (Doyon) - use Chris's?
 ck=2
 cna=3 #cna,ck: pump (ATPase) stoichiometries
@@ -95,7 +94,6 @@ xe=xe1*0.2
 ose=xe1+cle+nae+ke
 P=range(-8000,-4500)
 default_p=-2.432631
-#default_p=-15.41069
 default_P=-4699.0
 
 def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=0,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100):
@@ -127,9 +125,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     
     w=np.pi*rad**2*length #initial volume in liters
     w1=w #initial volume stored for graphing later
-    Ar=4e6 #area constant (F and H method)
-    Ar=2.0/rad
-    C=7e-6 #capacitance (F/dm^2)
+    Ar=2.0/rad #area constant (F and H method)
+    C=2e-4 #capacitance (F/dm^2)
     FinvCAr=F/(C*Ar) #(F/C*area scaling constant)
     
     na=25.562e-3

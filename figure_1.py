@@ -28,7 +28,7 @@ def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3]):
     return
         
 def f1c():
-    offpump=plm(graph=1,ton=1000,toff=7000,tt=8000)
+    offpump=plm(graph=1,ton=3000,toff=9000,tt=12000)
     return
     
 def f1d():
