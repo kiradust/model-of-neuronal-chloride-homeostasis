@@ -72,7 +72,7 @@ def f5b(moldelt=0):
     return
 
 def f5c(ratio=0.8,md=1e-12):
-    dez=plm(gx=1e-8,xt=20,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-0.9,tt=300)
+    dez=plm(gx=1e-8,xt=120,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-0.9,tt=720)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
     return
 
