@@ -24,6 +24,7 @@ def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):
         plt.subplot(2,1,2)
         plt.plot(endcl[11][0:-1],endcl[10][0:-1],'k'+sym[i])
     plt.show()
+    print endcl[20][-1]
     
     return
     
@@ -39,6 +40,9 @@ def f4b(init_x=range(25,586,40)):
         endk.append(end[6])
         endcl.append(end[7])
         endw.append(end[21])
+        print end[9]
+        print end[6]
+        print end[7]
     plt.figure()
     gs = gridspec.GridSpec(2, 1, height_ratios=[1.5, 1]) 
     plt.subplot(gs[0])

@@ -48,8 +48,6 @@ for m in labels:
         label_use.append(m)
         colors.append(color_use[label_use.index(m)])
 
-print label_use, color_use
-
 # weighting implementation
 an = []
 bn = []
@@ -59,7 +57,7 @@ for i in xrange(len(w)):
         an.append(a[i])
         bn.append(b[i])
 
-# linregress (linear regression analysis)
+# linregress returns:
 # Parameters:	
 # x, y : array_like two sets of measurements. Both arrays should have the same length. If only x is given (and y=None), then it must be a two-dimensional array where one dimension has length 2. The two sets of measurements are then found by splitting the array along the length-2 dimension.
 # Returns:	
@@ -70,24 +68,33 @@ for i in xrange(len(w)):
 # stderr : float; Standard error of the estimate
 print linregress(an,bn)
 
-# p = polyfit(x,y,n) returns the coefficients for a polynomial p(x) of degree n that is a best fit (in a least-squares sense) for the data in y. The coefficients in p are in descending powers, and the length of p is n+1
 m,c = polyfit(an, bn, 1)
 
-# weighting depiction in scatter plot and line-of-best-fit plot
+# p = polyfit(x,y,n) returns the coefficients for a polynomial p(x) of degree n that is a best fit (in a least-squares sense) for the data in y. The coefficients in p are in descending powers, and the length of p is n+1
+
+#labels = ['25792562','19252497','21532577','25066727','20089897']
+
+#plt.plot(a[0], b[0], 'ro',label='Whole cell patch clamp')
+#plt.plot(a[1], b[1], 'ro')
+#plt.plot(a[2], b[2], 'bo',label='Gramcidin perforated patch clamp')
+#plt.plot(a[3], b[3], 'yo',label='Fluorescence imaging')
+#plt.plot(a[4], b[4], 'go',label='Cell-attached patch clamp')
+
 s = [20*(n-10) for n in w]
-ax = plt.subplot(111)
 plt.scatter(a,b,s=s,c=colors,label=names)
+print label_use, color_use
+
+ax = plt.subplot(111)
 plt.plot(a, np.linalg.linalg.multiply(m,a)+c, color='black')
+
 plt.xlabel("Percentage change in KCC2 expression")
 plt.ylabel("Percentage change in intracellular chloride concentration")
 
-# add labels to plot (atm just the co-ord values)
 for xy in zip(a, b):                                       # <--
     ax.annotate('(%s, %s)' % xy, xy=xy, textcoords='offset points')
     
 plt.show()
 
-# run scipy's OLS (ordinary least squares) regression analysis
 def reg_m(y, x):
     ones = np.ones(len(x))
     X = sm.add_constant(np.column_stack((x, ones)))

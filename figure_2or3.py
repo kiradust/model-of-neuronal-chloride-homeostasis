@@ -80,6 +80,9 @@ def f3a():
     dg=plm(tk=30,tt=150)
     minithreefig([dg[11][1:-1],dg[14][1:-1],dg[13][1:-1],dg[16][1:-1],dg[10][1:-1],dg[24][1:-1]],'k')
     plt.show()
+    print dg[24][-1]
+    print dg[14][0]
+    print dg[14][-1]
     return
     
 def f3c():
