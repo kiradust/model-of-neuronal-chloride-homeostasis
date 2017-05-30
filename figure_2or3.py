@@ -62,16 +62,16 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10],molinit=0):
         ev.append(1000.0*v)
         df.append(ev[-1]-ecl[-1])
     
-    return chosen,ecl,ek,ena,df,ev,w
+    return np.log10(chosen),ecl,ek,ena,df,ev,w
 
 def f2a():
-    minifig(delta_gs(Gk=range(10,400),Gna=[50],Gkcc=[10],Gcl=[10]))
+    minifig(delta_gs(Gk=range(1,1000),Gna=[50],Gkcc=[10],Gcl=[10]))
     plt.show()
-    minifig(delta_gs(Gna=range(1,400),Gk=[50],Gkcc=[10],Gcl=[10]))
+    minifig(delta_gs(Gna=range(1,1000),Gk=[50],Gkcc=[10],Gcl=[10]))
     plt.show()
-    minifig(delta_gs(Gcl=range(0,400),Gk=[50],Gna=[50],Gkcc=[10]))
+    minifig(delta_gs(Gcl=range(1,1000),Gk=[50],Gna=[50],Gkcc=[10]))
     plt.show()
-    minifig(delta_gs(Gcl=range(1,400),Gk=[50],Gna=[50],Gkcc=[0]))
+    minifig(delta_gs(Gcl=range(1,1000),Gk=[50],Gna=[50],Gkcc=[0]))
     plt.show()
     #minifig(delta_gs(Gkcc=d_range,Gk=[50],Gna=[50],Gcl=[10]))
     return
@@ -86,7 +86,7 @@ def f3a():
     return
     
 def f3c():
-    dg=delta_gs(Gkcc=range(0,400),Gna=[50],Gk=[50],Gcl=[10])
+    dg=delta_gs(Gkcc=range(1,1000),Gna=[50],Gk=[50],Gcl=[10])
     minithreefig([dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k')
     plt.show()
     return

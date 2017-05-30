@@ -83,7 +83,7 @@ nao=145e-3
 clo=119e-3
 ko=3.5e-3 #nao,clo,ko: extracellular concentrations (mM converted to M)
 z=-0.85 #intracellular (and extracellular) charge of impermeant anions
-pkcc=1.0e-8
+pkcc=1e-8
 gamma=gna/gk
 beta=1.0/(gk*gcl+gkcc*gk+gcl*gkcc)
 nae=nao
@@ -92,11 +92,11 @@ cle=clo
 xe1=-1*(cle-nae-ke)
 xe=xe1*0.2
 ose=xe1+cle+nae+ke
-P=range(-8000,-4500)
+P=range(-8000,-3500)
 default_p=-2.432631
 default_P=-4699.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=0,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=0,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -115,7 +115,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     
     dt=1e-3 #zero time, dt time step
     if p<10**(-5.6)/F:
-        tt=60000.0
+        tt=10000.0
     elif 10**(-5.6)/F<p<10**(-3.4)/F:
         tt=10000.0
     ts=tt/n #plotting timestep 
@@ -181,7 +181,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         if f4d!=0:
             if xt+50>t>xt:
                 xe+=f4d*1e-3
-                cle-=f4d*1e-3
+                cle-=f4d*1e-3*1
         
         V=FinvCAr*(na+k-cl+z*x) #voltage
         
@@ -221,8 +221,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             print cl
         
         #kcc2
-        #jkcc2=sw*(gk*pkcc*(k*clo-k*cl)) #Fraser and Huang
-        jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
+        jkcc2=50.0*pkcc*(ke*cle-k*cl) #Fraser and Huang
+        #jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
 
         #ionic flux equations
         dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw) 
@@ -237,10 +237,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             if (np.abs(x*w-xinit*w1)<moldelt) and (abs((np.abs(z)-np.abs(ztarget)))>0.001) and (min(z,zx)<=ztarget<=max(z,zx)):
                 if xflux==0:
                     xtemp+=dx
-                    tt=t+100
+                    tt=t+300
                 else:
                     xtemp+=xflux
-                    tt=t+100
+                    tt=t+300
             else:
                 if (min(z,zx)<=ztarget<=max(z,zx)):
                     print 'anions stopped diffusing at '+str(t)
@@ -263,7 +263,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         x=xm+xtemp
         osi=na+k+cl+x #intracellular osmolarity 
         ose=nae+ke+cle+xe+xe1*0.8
-        w2=(w*osi)/ose #update volume 
+        w2=(w*osi)/ose #update volume
+        length=w2/(np.pi*rad**2)
         
         #correct ionic concentrations by volume change
         na=(na*w)/w2
@@ -286,12 +287,14 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         plt.plot(time,Na2,color=nacolor)
         plt.subplot(gs[1])
         plt.plot(time,Vm,'k')
+        plt.plot (time,Cl,color=clcolor)
+        plt.plot(time,K,color=kcolor)
         plt.subplot(gs[2])
         plt.plot(time,W,color=wcolor,label='relative volume')
         plt.show()
     
     print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'deltx', x*w-xinit*w1
-        
+    print 'w', w, 'length', length
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K, X2, w, z_delt, xe_delt, gkcc_delt
 
 def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):

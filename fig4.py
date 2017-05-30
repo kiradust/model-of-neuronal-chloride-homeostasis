@@ -60,9 +60,11 @@ def f4b(init_x=range(25,586,40)):
     
     return
     
-def f4c(gX=1e-8,tt=180,xt=25,xend=50,xflux=5e-7):
+def f4c(gX=1e-8,tt=240,xt=20,xend=50,xflux=5e-7):
     dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend)
     minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
+    print (dex[16][-1]-dex[14][-1])
+    print (dex[16][8000]-dex[14][8000])
     return
     
 def sf4c(GX=[5e-10,1e-9,5e-9,7e-9,1e-8,2e-8],tt=600,xt=25,ratio=0.98,xend=0):
@@ -93,6 +95,8 @@ def f4e(Z=range(-120,-49),moldelt=1e-12):
 def f4d(f=2e-3):
     dxe=plm(graph=1,gx=0,xt=30,two=0,tt=180,f4d=f)
     minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],'k')
+    print (dxe[16][-1]-dxe[14][-1])
+    print (dxe[16][8000]-dxe[14][8000])
     return
 
 def sf4fa():

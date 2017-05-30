@@ -10,8 +10,10 @@ from matplotlib import gridspec
 sym=['-b',':r','--g','-.m']
 
 def f5a():
-    dez=plm(dz=1e-6,two=1,xt=30,tt=180)
+    dez=plm(dz=1e-6,two=1,xt=30,tt=240)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
+    print (dez[16][-1]-dez[14][-1])
+    print (dez[16][8000]-dez[14][8000])
     return
 
 def f5b(moldelt=0):
@@ -72,8 +74,10 @@ def f5b(moldelt=0):
     return
 
 def f5c(ratio=0.8,md=1e-12):
-    dez=plm(gx=1e-8,xt=120,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-0.9,tt=720)
+    dez=plm(gx=1e-8,xt=120,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-0.9,tt=840)
     minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
+    print (dez[16][-1]-dez[14][-1])
+    print (dez[16][8000]-dez[14][8000])
     return
 
 def f5d():
