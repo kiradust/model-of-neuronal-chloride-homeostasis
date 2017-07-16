@@ -18,11 +18,12 @@ sym=['-',':','--','-.']
 def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):   
     plt.figure()
     for i in range(len(init_x)):
-        endcl=plm(xinit=init_x[i],tt=600, k_init=0,osmofix=True)
+        endcl=plm(xinit=init_x[i],tt=540, k_init=0,osmofix=True)
         plt.subplot(2,1,1)
         plt.plot(endcl[11][1:-1],endcl[20][1:-1],'m'+sym[i])
         plt.subplot(2,1,2)
         plt.plot(endcl[11][0:-1],endcl[10][0:-1],'k'+sym[i])
+    plt.savefig('f4a.eps')
     plt.show()
     print endcl[20][-1]
     
@@ -35,7 +36,7 @@ def f4b(init_x=range(25,586,40)):
     endw =[]
     
     for i in init_x:
-        end=plm(xinit=i*1e-3,tt=1000)
+        end=plm(xinit=i*1e-3,k_init=0,tt=1000,osmofix=True)
         endv.append(end[9])
         endk.append(end[6])
         endcl.append(end[7])
@@ -45,24 +46,28 @@ def f4b(init_x=range(25,586,40)):
         print end[7]
     plt.figure()
     gs = gridspec.GridSpec(2, 1, height_ratios=[1.5, 1]) 
-    plt.subplot(gs[0])
-    plt.plot(init_x,endcl,color=clcolor)
-    plt.plot(init_x,endcl,'bo')
-    plt.plot(init_x,endk,color=kcolor)
-    plt.plot(init_x,endk,'ro')
-    plt.plot(init_x,endv,'k')
-    plt.plot(init_x,endv,'ko')
-    plt.subplot(gs[1])
-    plt.plot(init_x,endw,color=wcolor)
-    plt.plot(init_x,endw,'ko')
-    minifig([init_x,endcl,endk,[],[],endv,endw])
+    a=plt.subplot(gs[0])
+    a.plot(init_x,endcl,color=clcolor)
+    a.plot(init_x,endcl,'bo')
+    a.plot(init_x,endk,color=kcolor)
+    a.plot(init_x,endk,'ro')
+    a.plot(init_x,endv,'k')
+    a.plot(init_x,endv,'ko')
+    a.set_ylim([-95,-75])
+    b=plt.subplot(gs[1])
+    b.plot(init_x,endw,color=wcolor)
+    b.plot(init_x,endw,'ko')
+    b.set_ylim([0,4e-13])
+    plt.savefig('f4b.eps')
     plt.show()
     
     return
     
-def f4c(gX=1e-8,tt=240,xt=20,xend=50,xflux=5e-7):
+def f4c(gX=1e-8,tt=540,xt=180,xend=180,xflux=5e-7):
     dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend)
     minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
+    plt.savefig('f4c.eps')
+    plt.show()
     print (dex[16][-1]-dex[14][-1])
     print (dex[16][8000]-dex[14][8000])
     return
@@ -83,20 +88,21 @@ def sf4c(GX=[5e-10,1e-9,5e-9,7e-9,1e-8,2e-8],tt=600,xt=25,ratio=0.98,xend=0):
     twoaxes(GX,deltecl,maxdeltecl,deltx,deltw)
     return
     
-def f4e(Z=range(-120,-49),moldelt=1e-12):
+def f4e(Z=range(-110,-40),moldelt=1e-12):
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=moldelt)
     zee=zp(Z=Z,molinit=molinit,moldelt=moldelt)
     newx=[]
     for i in zee[9]:
         newx.append(i)
-    a,b,c = minifigtwoaxes([Z,zee[3],zee[2],zee[5],zee[11],newx])
-    return a,b,c,zee[0], Z,zee,newx
+    return zee[0],Z,zee,newx
     
 def f4d(f=2e-3):
-    dxe=plm(graph=1,gx=0,xt=30,two=0,tt=180,f4d=f)
-    minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],'k')
+    dxe=plm(graph=1,gx=0,xt=120,two=0,tt=540,f4d=f)
+    minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],xcolor)
     print (dxe[16][-1]-dxe[14][-1])
     print (dxe[16][8000]-dxe[14][8000])
+    plt.savefig('f4d.eps')
+    plt.show()
     return
 
 def sf4fa():

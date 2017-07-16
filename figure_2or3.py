@@ -12,7 +12,7 @@ import numpy as np
 from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
 
-def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10],molinit=0):
+def delta_gs(Gk=[50],Gna=[10],Gkcc=[10],Gcl=[10],molinit=0):
     vm=[]
     cli=[]
     nai=[]
@@ -26,7 +26,7 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10],molinit=0):
     ena=[]
     df=[]
     chosen=[]
-    q=10**(default_P/1000.0)/(R*F)
+    q=10**(default_P/10000.0)/(R*F)
     for i in range(max(len(Gcl),len(Gkcc),len(Gk),len(Gna))):
         for a in Gk, Gna, Gkcc, Gcl:
             if len(a)<=i:
@@ -34,7 +34,7 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10],molinit=0):
             if len(a)>i+1:
                 chosen=a
         gkcc=Gkcc[i]*1.0e-9
-        gna=Gna[i]*1.0e-10
+        gna=Gna[i]*1.0e-9
         gk=Gk[i]*1.0e-9
         gcl=Gcl[i]*1.0e-9
         molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
@@ -65,35 +65,42 @@ def delta_gs(Gk=[50],Gna=[50],Gkcc=[10],Gcl=[10],molinit=0):
     return np.log10(chosen),ecl,ek,ena,df,ev,w
 
 def f2a():
-    minifig(delta_gs(Gk=range(1,1000),Gna=[50],Gkcc=[10],Gcl=[10]))
+    minifig(delta_gs(Gk=range(1,1000),Gna=[10],Gkcc=[10],Gcl=[10]),x=np.log10(50))
+    plt.savefig('f2a.eps')
     plt.show()
-    minifig(delta_gs(Gna=range(1,1000),Gk=[50],Gkcc=[10],Gcl=[10]))
+    minifig(delta_gs(Gna=range(1,1000),Gk=[50],Gkcc=[10],Gcl=[10]),x=np.log10(10))
+    plt.savefig('f2b.eps')
     plt.show()
-    minifig(delta_gs(Gcl=range(1,1000),Gk=[50],Gna=[50],Gkcc=[10]))
+    minifig(delta_gs(Gcl=range(1,1000),Gk=[50],Gna=[10],Gkcc=[10]),x=np.log10(10))
+    plt.savefig('f2c.eps')
     plt.show()
-    minifig(delta_gs(Gcl=range(1,1000),Gk=[50],Gna=[50],Gkcc=[0]))
+    minifig(delta_gs(Gcl=range(1,1000),Gk=[50],Gna=[10],Gkcc=[0]),x=np.log10(10))
+    plt.savefig('f2d.eps')
     plt.show()
     #minifig(delta_gs(Gkcc=d_range,Gk=[50],Gna=[50],Gcl=[10]))
     return
     
 def f3a():
-    dg=plm(tk=30,tt=150)
+    dg=plm(tk=60,tt=300)
     minithreefig([dg[11][1:-1],dg[14][1:-1],dg[13][1:-1],dg[16][1:-1],dg[10][1:-1],dg[24][1:-1]],'k')
+    plt.savefig('f3a.eps')
     plt.show()
     print dg[24][-1]
     print dg[14][0]
     print dg[14][-1]
     return
     
-def f3c():
-    dg=delta_gs(Gkcc=range(1,1000),Gna=[50],Gk=[50],Gcl=[10])
-    minithreefig([dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k')
+def f3b():
+    dg=delta_gs(Gkcc=range(1,1000),Gna=[10],Gk=[50],Gcl=[10])
+    minithreefig([dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k',x=1)
+    plt.savefig('f3b.eps')
     plt.show()
     return
     
-def f3b():
+def f3d():
     molint=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
     gp=zplm(molinit=molint)
-    minifig([gp[0],gp[3],gp[2],[],[],gp[5],gp[11]])
+    minifig([gp[0],gp[3],gp[2],[],[],gp[5],gp[11]],x=-2500)
+    plt.savefig('f3d.eps')
     plt.show()
     return

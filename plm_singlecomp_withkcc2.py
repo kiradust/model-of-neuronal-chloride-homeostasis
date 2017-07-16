@@ -68,10 +68,10 @@ rcParams['figure.figsize'] = 8,8
 from plotting import clcolor, kcolor, xcolor,nacolor,wcolor
 
 #constants
-R=25.69*1e-3
-F=96485.0 #R (RT/F) in Volts, where F is Faraday's constant in C/mol
+R=26.725*1e-3
+F=96485.0 #R (RT/F) in Volts, where F is Faraday's constant in C/mol, and T is 37 deg C
 n=200 #points to plot 
-gna=5e-9
+gna=1e-8
 gk=5e-8
 gcl=1e-8 #gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
 gkcc=1e-8 #1 is 'high' (Doyon) - use Chris's?
@@ -92,11 +92,12 @@ cle=clo
 xe1=-1*(cle-nae-ke)
 xe=xe1*0.2
 ose=xe1+cle+nae+ke
-P=range(-8000,-3500)
-default_p=-2.432631
-default_P=-4699.0
+P=range(-44279,-44278) 
+P=range(-70000,-42500)
+default_p=-2.500
+default_P=-44279.0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=4.34333e-3,toff=150000,ton=150000,tt=200,xinit=155.858e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=0,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.2e-3,toff=150000,ton=150000,tt=200,xinit=154.9e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=103.9e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps'):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -114,22 +115,21 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     gkcc_delt=[]
     
     dt=1e-3 #zero time, dt time step
-    if p<10**(-5.6)/F:
-        tt=10000.0
-    elif 10**(-5.6)/F<p<10**(-3.4)/F:
-        tt=10000.0
     ts=tt/n #plotting timestep 
     ctr=1 #counter for plotting points
     t=0 #real time
     sw=0 #switch for ATPase action 
     
     w=np.pi*rad**2*length #initial volume in liters
+    sa=2*np.pi*rad*(rad+length)
     w1=w #initial volume stored for graphing later
     Ar=2.0/rad #area constant (F and H method)
+    if areascale==0 or areascale==1:
+        Ar=sa/w
     C=2e-4 #capacitance (F/dm^2)
     FinvCAr=F/(C*Ar) #(F/C*area scaling constant)
     
-    na=25.562e-3
+    na=33e-3
     x=xinit
     #cl=((os_init-na-k)*z+na+k)/(1+z)
     cl=clinit
@@ -141,6 +141,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             x=(os_init-2*cl)/(1-z)
         else:
             cl=(os_init+(z-1)*x)/2.0
+            print cl
     
     if k_init==0:
         k=cl-z*x-na
@@ -168,10 +169,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         else:
             sw=1
             
-        if tk+51>t>tk:
-            pkcc += 5e-12    #control switch for gkkc ramp
+        if tk+180>t>tk:
+            pkcc += 2e-13    #control switch for gkkc ramp
 
-        if dz!=0 and xt<t<xt+50 and xtemp>0 and xm>0:
+        if dz!=0 and xt<t<xt+120 and xtemp>0 and xm>0:
             xtemp+=dz
             xm-=dz
 
@@ -179,9 +180,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             z=(zxm*xm+zx*xtemp)/(xm+xtemp)
         
         if f4d!=0:
-            if xt+50>t>xt:
-                xe+=f4d*1e-3
-                cle-=f4d*1e-3*1
+            if xt+120>t>xt:
+                xe+=f4d*4e-4
+                cle-=f4d*4e-4*1
         
         V=FinvCAr*(na+k-cl+z*x) #voltage
         
@@ -202,9 +203,6 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             xe_delt.append(xe)
             gkcc_delt.append(pkcc)
             ctr+=1
-            
-        #if K[-1]>-1 or Na[-1]<1 or Cl[-1]>-1:
-            #print t
         
         jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
         if na>=(nao-0.0005) and t > toff:
@@ -215,14 +213,15 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         if k<=(ko+0.0005) and t > toff:
             print t
             print "K"
+            print V
         
         if cl>=(clo-0.0005) and t > toff:
             print t
             print cl
         
         #kcc2
-        jkcc2=50.0*pkcc*(ke*cle-k*cl) #Fraser and Huang
-        #jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
+        #jkcc2=50.0*pkcc*(ke*cle-k*cl) #Fraser and Huang
+        jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
 
         #ionic flux equations
         dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw) 
@@ -237,10 +236,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             if (np.abs(x*w-xinit*w1)<moldelt) and (abs((np.abs(z)-np.abs(ztarget)))>0.001) and (min(z,zx)<=ztarget<=max(z,zx)):
                 if xflux==0:
                     xtemp+=dx
-                    tt=t+300
+                    tt=t+180
                 else:
                     xtemp+=xflux
-                    tt=t+300
+                    tt=t+180
             else:
                 if (min(z,zx)<=ztarget<=max(z,zx)):
                     print 'anions stopped diffusing at '+str(t)
@@ -264,7 +263,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         osi=na+k+cl+x #intracellular osmolarity 
         ose=nae+ke+cle+xe+xe1*0.8
         w2=(w*osi)/ose #update volume
-        length=w2/(np.pi*rad**2)
+        #length=w2/(np.pi*rad**2)
         
         #correct ionic concentrations by volume change
         na=(na*w)/w2
@@ -274,6 +273,14 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         xm=(xm*w)/w2
         xtemp=(xtemp*w)/w2
         w=w2
+        if areascale==1:
+            rad=np.sqrt(w/(np.pi*length))
+            sa=2*np.pi*rad*(rad+length)
+            Ar=sa/w
+            FinvCAr=F/(C*Ar)
+        elif areascale==0:
+            Ar=sa/w
+            FinvCAr=F/(C*Ar)
         t+=dt
         
     #plot if asked    
@@ -291,10 +298,11 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         plt.plot(time,K,color=kcolor)
         plt.subplot(gs[2])
         plt.plot(time,W,color=wcolor,label='relative volume')
+        plt.savefig(title)
         plt.show()
     
     print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'deltx', x*w-xinit*w1
-    print 'w', w, 'length', length
+    print 'w', w, 'radius', rad
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K, X2, w, z_delt, xe_delt, gkcc_delt
 
 def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
@@ -313,7 +321,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     w=[]
     #beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
     for p in P:
-        q=10**(p/1000.0)/(F*R)
+        q=10**(p/10000.0)/(F*R)
         if z==-1:
             theta=0.5*ose/(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))
         else:
@@ -340,46 +348,54 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     plt.figure()
     plt.plot(pi,ecl,color=clcolor)
     plt.plot(pi,ek,color=kcolor)
-    plt.plot(pi,ena,color=nacolor)
-    plt.plot(pi,xi,color=xcolor)
+    #plt.plot(pi,ena,color=nacolor)
+    #plt.plot(pi,xi,color=xcolor)
     plt.plot(pi,ev,'k--')
+    plt.ylabel('mV')
+    plt.xlabel('pump rate')
+    plt.savefig('pump_mV.eps')
     plt.show()
     
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
     
-def checkpara():
+def checkpara(time=60000):
     ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-    T=[-8000,-7000,-6000,-5500,-5000,-4500,-4000,-3000,-2000,-1000,0]
-    time=200
+    T=[-7000,-6000,-5500,-5000,-4500,-4000,-3500,-2500,-1500,-500,500]
     
     for k in T:
         q=10**(k/1000.0)/F
+        if k>-4000:
+            time=1000
+        elif k>-5500:
+            time=5000
         a=plm(p=q,tt=time)
-        for i in range(23):
+        print len(a)
+        for i in range(25):
             ti[i].append(a[i])
     
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
     para=zplm(molinit=molinit)
     gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
     plt.subplot(gs[0])
-    plt.plot(para[0],para[8],color=clcolor)
-    plt.plot(para[0],para[7],color=kcolor)
-    plt.plot(para[0],para[6],color=nacolor)
-    plt.plot(para[0],para[9],color=xcolor)
+    plt.plot(para[0],para[8],color=clcolor,linestyle='-')
+    plt.plot(para[0],para[7],color=kcolor,linestyle='-')
+    plt.plot(para[0],para[6],color=nacolor,linestyle='-')
+    plt.plot(para[0],para[9],color=xcolor,linestyle='-')
     plt.plot(T,ti[0],'ro')
     plt.plot(T,ti[1],'go')
     plt.plot(T,ti[2],'bo')
     plt.plot(T,ti[3],'mo')
     plt.subplot(gs[1])
-    plt.plot(para[0],para[10],'k')
+    plt.plot(para[0],para[10],'k-')
     plt.plot(T,ti[4],'ko')
     plt.subplot(gs[2])
-    plt.plot(para[0],para[11],color=wcolor)
+    plt.plot(para[0],para[11],color=wcolor,linestyle='-')
     plt.plot(T,ti[21],'ko')
+    plt.savefig('checkpara.eps')
     plt.show()
     return ti
 
-def zp(Z,p=default_P/1000.0,gkcc=gkcc,graph=0,molinit=0,moldelt=0):
+def zp(Z,p=default_P/10000.0,gkcc=gkcc,graph=0,molinit=0,moldelt=0):
     nai=[]
     ki=[]
     cli=[]

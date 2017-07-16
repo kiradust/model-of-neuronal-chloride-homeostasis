@@ -24,15 +24,15 @@ def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3]):
         plt.plot(endcl[11],endcl[10],'k'+sym[i])
         leg.append(str(init_cl[i]*1000)+' mM')
     #plt.legend(leg)
+    plt.savefig('f1b.eps')
     plt.show()
     return
         
 def f1c():
-    offpump=plm(graph=1,ton=3000,toff=9000,tt=12000)
+    offpump=plm(graph=1,ton=3000,toff=9000,tt=12000,title='f1c.eps')
     return
     
 def f1d():
     c=checkpara()
     # "relative volume" is a lie --> assumes same initial [X]
     return
-    
