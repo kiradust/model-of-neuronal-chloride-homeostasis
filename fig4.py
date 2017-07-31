@@ -132,3 +132,9 @@ def sf4fb():
             #plt.ylim((-0.83,-0.85))
     plt.show()
     return
+
+def neww():
+    a=plm(neww=1,ton=10,toff=90,tt=200)
+    minithreefig([a[11][1:-1],a[14][1:-1],a[13][1:-1],a[16][1:-1],a[10][1:-1],a[20][1:-1]],xcolor)
+    plt.show()
+    return

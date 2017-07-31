@@ -73,17 +73,17 @@ def minithreefig(delta,colour,x=0):
     ax0.plot(delta[0],delta[1],color=clcolor)
     ax0.plot(delta[0],delta[2],color=kcolor)
     ax0.plot(delta[0],delta[3],'k')
-    ax0.set_ylim([-100,-70])
+    ax0.set_ylim([-95,-75])
     if x!=0:
         ax0.axvline(x=x,linestyle='--',color='0.8')
     ax1=plt.subplot(gs[1])
     ax1.plot(delta[0],delta[4],color=wcolor) #volume
-    ax1.set_ylim([0.9e-13,1.2e-13])
+    ax1.set_ylim([1.01e-13,1.04e-13])
     if x!=0:
         ax1.axvline(x=x,linestyle='--',color='0.8')
     ax2=plt.subplot(gs[2])
     ax2.plot(delta[0],delta[5],color=colour) #conc X
     if x!=0:
         ax2.axvline(x=x,linestyle='--',color='0.8')
-    ax2.set_ylim([0,120e-3])
+    ax2.set_ylim([0,2.1e-7])
     return

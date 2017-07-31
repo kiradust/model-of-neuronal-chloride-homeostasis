@@ -96,8 +96,11 @@ P=range(-44279,-44278)
 P=range(-70000,-42500)
 default_p=-2.500
 default_P=-44279.0
+vw=0.018 #partial molar volume of water, dm3/mol
+pw=0.0015 #osmotic permeability, biological membrane (muscle? unknown), dm s
+km=6*10**(-6) #extensional rigidity of RBC at 23 deg, Mohandas and Evans (1994), N/m
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.2e-3,toff=150000,ton=150000,tt=200,xinit=154.9e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=103.9e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps'):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.2e-3,toff=150000,ton=150000,tt=200,xinit=154.9e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=103.9e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -118,16 +121,17 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     ts=tt/n #plotting timestep 
     ctr=1 #counter for plotting points
     t=0 #real time
-    sw=0 #switch for ATPase action 
+    sw=1 #switch for ATPase action 
     
     w=np.pi*rad**2*length #initial volume in liters
-    sa=2*np.pi*rad*(rad+length)
+    sa=2*np.pi*rad*(length)
     w1=w #initial volume stored for graphing later
     Ar=2.0/rad #area constant (F and H method)
     if areascale==0 or areascale==1:
         Ar=sa/w
     C=2e-4 #capacitance (F/dm^2)
     FinvCAr=F/(C*Ar) #(F/C*area scaling constant)
+    sarest=sa
     
     na=33e-3
     x=xinit
@@ -153,6 +157,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     zxm=z
     zx=z
     cle=clo
+    pd=-20
     
     if two==1:
         zx=Zx
@@ -160,30 +165,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         if paratwo==True:
             return (w*xinit)
         
-    while t < tt: #loop over time
-        if (toff>t) and (t>ton):
-            sw=0
-        elif toff+200>t>toff:
-            sw=1     #control switch
-            #jp=p
-        else:
-            sw=1
-            
-        if tk+180>t>tk:
-            pkcc += 2e-13    #control switch for gkkc ramp
-
-        if dz!=0 and xt<t<xt+120 and xtemp>0 and xm>0:
-            xtemp+=dz
-            xm-=dz
-
-        if two==1:
-            z=(zxm*xm+zx*xtemp)/(xm+xtemp)
-        
-        if f4d!=0:
-            if xt+120>t>xt:
-                xe+=f4d*4e-4
-                cle-=f4d*4e-4*1
-        
+    while t < tt: #loop over time              
         V=FinvCAr*(na+k-cl+z*x) #voltage
         
         #update arrays for plotting
@@ -204,21 +186,33 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             gkcc_delt.append(pkcc)
             ctr+=1
         
-        jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
-        if na>=(nao-0.0005) and t > toff:
-            print t
-            print "Na"
-            #jp=p
+        if tk+180>t>tk:
+            pkcc += 1e-12    #control switch for gkkc ramp
+
+        if dz!=0 and xt<t<xt+120 and xtemp>0 and xm>0:
+            xtemp+=dz
+            xm-=dz
+
+        if two==1:
+            z=(zxm*xm+zx*xtemp)/(xm+xtemp)
         
-        if k<=(ko+0.0005) and t > toff:
-            print t
-            print "K"
-            print V
+        if f4d!=0:
+            if xt+120>t>xt:
+                xe+=f4d*4e-4
+                cle-=f4d*4e-4*1
         
-        if cl>=(clo-0.0005) and t > toff:
-            print t
-            print cl
+        if (toff>t) and (t>ton):
+            sw=0
+        elif t>toff:
+            sw=1
+            if pd<default_p:
+                pd+=5e-6
+                p=(10**(pd))/(F)
+            jp=p*(na/nao)**3
+        else:
+            jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
         
+            # constant/linear made this worse :(
         #kcc2
         #jkcc2=50.0*pkcc*(ke*cle-k*cl) #Fraser and Huang
         jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
@@ -263,6 +257,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         osi=na+k+cl+x #intracellular osmolarity 
         ose=nae+ke+cle+xe+xe1*0.8
         w2=(w*osi)/ose #update volume
+        
+        if neww==1:
+            dt=1e-3
+            w2=w+dt*(vw*pw*sa*(osi-ose)+1e-7*pw*km*(sarest-sa)/sarest)
         #length=w2/(np.pi*rad**2)
         
         #correct ionic concentrations by volume change
@@ -275,12 +273,13 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         w=w2
         if areascale==1:
             rad=np.sqrt(w/(np.pi*length))
-            sa=2*np.pi*rad*(rad+length)
+            sa=2*np.pi*rad*(length)
             Ar=sa/w
             FinvCAr=F/(C*Ar)
         elif areascale==0:
             Ar=sa/w
             FinvCAr=F/(C*Ar)
+            
         t+=dt
         
     #plot if asked    
@@ -301,7 +300,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         plt.savefig(title)
         plt.show()
     
-    print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'deltx', x*w-xinit*w1
+    print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1
     print 'w', w, 'radius', rad
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K, X2, w, z_delt, xe_delt, gkcc_delt
 
@@ -343,7 +342,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
         if molinit != 0:
             w.append((molinit)/xi[-1])
         else:
-            w.append(0.155157217542/xi[-1])
+            w.append(0.1549/xi[-1])
     
     plt.figure()
     plt.plot(pi,ecl,color=clcolor)
@@ -358,7 +357,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
     
-def checkpara(time=60000):
+def checkpara(time=80000):
     ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
     T=[-7000,-6000,-5500,-5000,-4500,-4000,-3500,-2500,-1500,-500,500]
     
