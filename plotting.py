@@ -37,19 +37,21 @@ def twoaxes(x,y11,y12,y13,y22):
     plt.show()
     return
     
-def minifig(delta,x=0):
+def minifig(delta,x=0,yl=[[-100,75],[1.5e-12,4e-12]]):
     plt.figure()
     gs = gridspec.GridSpec(2, 1, height_ratios=[1.5, 1]) 
-    plt.subplot(gs[0])
-    plt.plot(delta[0],delta[1],color=clcolor)
-    plt.plot(delta[0],delta[2],color=kcolor)
-    plt.plot(delta[0],delta[5],'k')
+    ax0=plt.subplot(gs[0])
+    ax0.plot(delta[0],delta[1],color=clcolor)
+    ax0.plot(delta[0],delta[2],color=kcolor)
+    ax0.plot(delta[0],delta[5],'k')
+    ax0.set_ylim(yl[0])
     if x!=0:
-        plt.axvline(x=x,linestyle='--',color='0.8')
-    plt.subplot(gs[1])
-    plt.plot(delta[0],delta[6],color=wcolor)
+        ax0.axvline(x=x,linestyle='--',color='0.8')
+    ax1=plt.subplot(gs[1])
+    ax1.plot(delta[0],delta[6],color=wcolor)
+    ax1.set_ylim(yl[1])
     if x!=0:
-        plt.axvline(x=x,linestyle='--',color='0.8')
+        ax1.axvline(x=x,linestyle='--',color='0.8')
     return
     
 def minifigtwoaxes(delta):
@@ -66,24 +68,24 @@ def minifigtwoaxes(delta):
     ax2.plot(delta[0],delta[5],color=xcolor,clip_on=False)
     return ax0, ax1, ax2
     
-def minithreefig(delta,colour,x=0):
+def minithreefig(delta,colour,x=0,yl=[[-100,-70],[1.0e-13,1.6e-13],[-0.95,-0.8]]):
     plt.figure()
     gs = gridspec.GridSpec(3,1,height_ratios=[1.5,0.5,0.5])
     ax0=plt.subplot(gs[0])
     ax0.plot(delta[0],delta[1],color=clcolor)
     ax0.plot(delta[0],delta[2],color=kcolor)
     ax0.plot(delta[0],delta[3],'k')
-    ax0.set_ylim([-95,-75])
+    ax0.set_ylim(yl[0])
     if x!=0:
         ax0.axvline(x=x,linestyle='--',color='0.8')
     ax1=plt.subplot(gs[1])
     ax1.plot(delta[0],delta[4],color=wcolor) #volume
-    ax1.set_ylim([1.01e-13,1.04e-13])
+    ax1.set_ylim(yl[1])
     if x!=0:
         ax1.axvline(x=x,linestyle='--',color='0.8')
     ax2=plt.subplot(gs[2])
     ax2.plot(delta[0],delta[5],color=colour) #conc X
     if x!=0:
         ax2.axvline(x=x,linestyle='--',color='0.8')
-    ax2.set_ylim([0,2.1e-7])
+    ax2.set_ylim(yl[2])
     return

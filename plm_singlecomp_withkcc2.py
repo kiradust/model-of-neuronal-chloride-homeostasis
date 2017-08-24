@@ -71,19 +71,18 @@ from plotting import clcolor, kcolor, xcolor,nacolor,wcolor
 R=26.725*1e-3
 F=96485.0 #R (RT/F) in Volts, where F is Faraday's constant in C/mol, and T is 37 deg C
 n=200 #points to plot 
-gna=1e-8
-gk=5e-8
-gcl=1e-8 #gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
-gkcc=1e-8 #1 is 'high' (Doyon) - use Chris's?
+gna=2e-7
+gk=7e-7
+gcl=2e-7 #gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
+gkcc=2e-7 #1 is 'high' (Doyon) - use Chris's?
 ck=2
 cna=3 #cna,ck: pump (ATPase) stoichiometries
-rad=0.5*1e-5 #radius in um convert to dm
-length=130*1e-5 #length in um converted to dm
+rad=5*1e-5 #radius in um convert to dm
+length=25*1e-5 #length in um converted to dm
 nao=145e-3
 clo=119e-3
 ko=3.5e-3 #nao,clo,ko: extracellular concentrations (mM converted to M)
 z=-0.85 #intracellular (and extracellular) charge of impermeant anions
-pkcc=1e-8
 gamma=gna/gk
 beta=1.0/(gk*gcl+gkcc*gk+gcl*gkcc)
 nae=nao
@@ -92,15 +91,15 @@ cle=clo
 xe1=-1*(cle-nae-ke)
 xe=xe1*0.2
 ose=xe1+cle+nae+ke
-P=range(-44279,-44278) 
-P=range(-70000,-42500)
-default_p=-2.500
-default_P=-44279.0
+P=range(-60000,-28750) 
+#P=range(-30602,-30601) 
+default_p=-0
+default_P=-30601
 vw=0.018 #partial molar volume of water, dm3/mol
 pw=0.0015 #osmotic permeability, biological membrane (muscle? unknown), dm s
 km=6*10**(-6) #extensional rigidity of RBC at 23 deg, Mohandas and Evans (1994), N/m
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.2e-3,toff=150000,ton=150000,tt=200,xinit=154.9e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=103.9e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=123.029e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -133,7 +132,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     FinvCAr=F/(C*Ar) #(F/C*area scaling constant)
     sarest=sa
     
-    na=33e-3
+    na=13.845e-3
     x=xinit
     #cl=((os_init-na-k)*z+na+k)/(1+z)
     cl=clinit
@@ -157,14 +156,16 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     zxm=z
     zx=z
     cle=clo
-    pd=-20
+    pdinit=-6.0
+    pd=default_p
+    em=(default_p-pdinit)/(12.0*10**4)/5
     
     if two==1:
         zx=Zx
         zxm=(z*x-zx*xtemp)/xm
         if paratwo==True:
-            return (w*xinit)
-        
+            return (w*x)
+    
     while t < tt: #loop over time              
         V=FinvCAr*(na+k-cl+z*x) #voltage
         
@@ -187,9 +188,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             ctr+=1
         
         if tk+180>t>tk:
-            pkcc += 1e-12    #control switch for gkkc ramp
+            pkcc += 1e-11    #control switch for gkkc ramp
 
-        if dz!=0 and xt<t<xt+120 and xtemp>0 and xm>0:
+        if dz!=0 and xt<t<xt+180 and xtemp>0 and xm>0:
             xtemp+=dz
             xm-=dz
 
@@ -201,18 +202,17 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                 xe+=f4d*4e-4
                 cle-=f4d*4e-4*1
         
-        if (toff>t) and (t>ton):
-            sw=0
-        elif t>toff:
-            sw=1
-            if pd<default_p:
-                pd+=5e-6
-                p=(10**(pd))/(F)
-            jp=p*(na/nao)**3
-        else:
-            jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
+        jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
         
-            # constant/linear made this worse :(
+        if (toff>t) and (t>ton):
+            if pd>pdinit:
+                pd-=em
+                p=(10**(pd))/F
+        elif t>toff:
+            if pd<default_p:
+                pd+=em
+                p=(10**(pd))/F
+
         #kcc2
         #jkcc2=50.0*pkcc*(ke*cle-k*cl) #Fraser and Huang
         jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
@@ -257,6 +257,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         osi=na+k+cl+x #intracellular osmolarity 
         ose=nae+ke+cle+xe+xe1*0.8
         w2=(w*osi)/ose #update volume
+        w2=w+dt*(vw*pw*sa*(osi-ose))
         
         if neww==1:
             dt=1e-3
@@ -357,17 +358,18 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
     
-def checkpara(time=80000):
+def checkpara(time=50000):
     ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-    T=[-7000,-6000,-5500,-5000,-4500,-4000,-3500,-2500,-1500,-500,500]
+    T=[-6000,-5000,-4500,-4000,-3500,-3000,-2000,-1000,0,1000,2000,3000,4000]
     
     for k in T:
         q=10**(k/1000.0)/F
         if k>-4000:
             time=1000
-        elif k>-5500:
-            time=5000
-        a=plm(p=q,tt=time)
+        elif k>-5000:
+            time=20000
+            
+        a=plm(p=q,tt=time,graph=1)
         print len(a)
         for i in range(25):
             ti[i].append(a[i])
