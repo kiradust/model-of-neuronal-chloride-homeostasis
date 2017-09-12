@@ -29,9 +29,12 @@ def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3]):
     plt.show()
     return
         
-def f1c():
-    offpump=plm(graph=1,ton=3000,toff=9000,tt=12000,title='f1c.eps')
-    return
+def f1c(new=0,l='-',g1=0,g2=0,g3=0):
+    g=1
+    if new!=0:
+        g=2
+    offpump=plm(graph=g,ton=3000,toff=9000,tt=12000,title='f1c.eps',neww=new,ls=l,a0=g1,a1=g2,a2=g3)
+    return offpump
     
 def f1d():
     c=checkpara()

@@ -9,12 +9,21 @@ from matplotlib import gridspec
 
 sym=['-k',':k','--k','-.k']
 
-def f5a():
+def f5a(new=0):
     dez=plm(dz=2.5e-7,two=1,xt=180,tt=540,ztarget=-1)
-    minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k',yl=[[-100,-70],[1.8e-12,3.3e-12],[-0.95,-0.8]])
-    plt.savefig('f5a.eps')
+    a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k',yl=[[-100,-70],[1.8e-12,3.3e-12],[-0.95,-0.8]])
     print (dez[16][-1]-dez[14][-1])
-    print (dez[16][8000]-dez[14][8000])
+    print (dez[16][135000]-dez[14][135000])
+    if new==1:
+        delta=plm(dz=2.5e-7,two=1,xt=180,tt=540,ztarget=-1,neww=1)
+        a0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
+        a0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
+        a0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
+        a1.plot(delta[11][1:-1],delta[10][1:-1],color=wcolor,ls='--') #volume
+        a2.plot(delta[11][1:-1],delta[22][1:-1],color=xcolor,ls='--')
+        print (delta[16][-1]-delta[14][-1])
+    plt.show()
+    plt.savefig('f5anew.eps')
     return
 
 def f5b(moldelt=0):
@@ -71,12 +80,23 @@ def f5b(moldelt=0):
     plt.show()
     return
 
-def f5c(ratio=0.8,md=1e-12):
-    dez=plm(gx=1e-8,xt=180,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-0.9,tt=540)
-    minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k',yl=[[-100,-70],[1.8e-12,3.3e-12],[-0.95,-0.8]])
-    plt.savefig('f5c.eps')
+def f5c(ttt=2000,ratio=0.8,md=1e-12,new=0,title='f5c.eps'):
+    dez=plm(gx=1e-8,xt=180,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-0.9,tt=ttt)
+    print(len(dez[16]))
+    a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k',yl=[[-100,-70],[1.8e-12,3.3e-12],[-0.95,-0.8]])
     print (dez[16][-1]-dez[14][-1])
-    print (dez[16][8000]-dez[14][8000])
+    #print (dez[16][135000]-dez[14][135000])
+    if new==1:
+        delta=plm(gx=1e-8,xt=180,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-0.9,tt=ttt,neww=1)
+        a0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
+        a0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
+        a0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
+        a1.plot(delta[11][1:-1],delta[10][1:-1],color=wcolor,ls='--') #volume
+        a2.plot(delta[11][1:-1],delta[22][1:-1],color=xcolor,ls='--')
+        print (delta[16][-1]-delta[14][-1])
+        #print (delta[16][135000]-delta[14][135000])
+    plt.savefig(title)
+    plt.show()
     return
 
 def f5d():
@@ -84,6 +104,8 @@ def f5d():
     z=[[],[],[],[]]
     ZX=[-0.5,-1,-2,-3]
     ZT=[-0.5,-0.55,-0.6,-0.85,-0.9,-0.95,-1,-1.5,-1.75,-1.9,-1.94,-1.945,-2.0,-2.5,-2.75,-2.9,-2.94,-2.945,-3.0]
+    ZT=[-1.25]
+    ZX=[-1.5]
     plt.figure()
     for a in ZX:
         for b in ZT:
@@ -97,3 +119,8 @@ def f5d():
     plt.savefig('f5e.eps')
     plt.show()
     return w,z
+
+def new5():
+    f5a(new=1)
+    #f5c(ttt=2000,new=1,title='f8e.eps')
+    return

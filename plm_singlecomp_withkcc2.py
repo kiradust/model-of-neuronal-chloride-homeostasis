@@ -78,6 +78,7 @@ gkcc=2e-7 #1 is 'high' (Doyon) - use Chris's?
 ck=2
 cna=3 #cna,ck: pump (ATPase) stoichiometries
 rad=5*1e-5 #radius in um convert to dm
+rad0=rad
 length=25*1e-5 #length in um converted to dm
 nao=145e-3
 clo=119e-3
@@ -97,9 +98,13 @@ default_p=-0
 default_P=-30601
 vw=0.018 #partial molar volume of water, dm3/mol
 pw=0.0015 #osmotic permeability, biological membrane (muscle? unknown), dm s
-km=6*10**(-6) #extensional rigidity of RBC at 23 deg, Mohandas and Evans (1994), N/m
+km=6*10**(-7) #extensional rigidity of RBC at 23 deg, Mohandas and Evans (1994), N/dm
+km2=1.0*10**(2)
+density=1.0 #kg/dm3 = g/ml --> assume close to 1 (density of water)
+hp=1e-3
+hydrop=0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=123.029e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=123.029e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -142,6 +147,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     if osmofix==True:
         if xinit==0:
             x=(os_init-2*cl)/(1-z)
+            xinit=x
         else:
             cl=(os_init+(z-1)*x)/2.0
             print cl
@@ -149,7 +155,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     if k_init==0:
         k=cl-z*x-na
     print "k_init: "+str(k)
-    print "ose: "+str(k+cl+x+na)
+    print "osi: "+str(k+cl+x+na)
     print "z_aim: "+str(ztarget) +" with zflux of "+str(Zx)
     xm=x*ratio
     xtemp=x*(1-ratio)
@@ -260,9 +266,12 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         w2=w+dt*(vw*pw*sa*(osi-ose))
         
         if neww==1:
-            dt=1e-3
-            w2=w+dt*(vw*pw*sa*(osi-ose)+1e-7*pw*km*(sarest-sa)/sarest)
-        #length=w2/(np.pi*rad**2)
+            w2=w+dt*(vw*pw*sa*(osi-ose)+hp*dt/density*km*(sarest-sa)/sarest)
+        elif neww==2:
+            w2=w+dt*(vw*pw*sa*(osi-ose-os_choose))
+        elif neww==3:
+            hydrop=4.0*km2*np.pi*(1.0-rad0/rad)/(R*F)
+            w2=w+dt*(vw*pw*sa*(osi-ose-hydrop))
         
         #correct ionic concentrations by volume change
         na=(na*w)/w2
@@ -272,38 +281,51 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         xm=(xm*w)/w2
         xtemp=(xtemp*w)/w2
         w=w2
+        sa=2*np.pi*rad*(length)
+        
         if areascale==1:
             rad=np.sqrt(w/(np.pi*length))
-            sa=2*np.pi*rad*(length)
             Ar=sa/w
             FinvCAr=F/(C*Ar)
         elif areascale==0:
-            Ar=sa/w
-            FinvCAr=F/(C*Ar)
+            length=w/(np.pi*rad**2)
             
         t+=dt
         
-    #plot if asked    
+    #plot if asked
     if graph==1:
         gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
         plt.figure()
-        plt.subplot(gs[0])
-        plt.plot (time,Cl2,color=clcolor)
-        plt.plot(time,K2,color=kcolor)
-        plt.plot(time,X2,color=xcolor)
-        plt.plot(time,Na2,color=nacolor)
-        plt.subplot(gs[1])
-        plt.plot(time,Vm,'k')
-        plt.plot (time,Cl,color=clcolor)
-        plt.plot(time,K,color=kcolor)
-        plt.subplot(gs[2])
-        plt.plot(time,W,color=wcolor,label='relative volume')
+        a0=plt.subplot(gs[0])
+        a0.plot (time,Cl2,color=clcolor)
+        a0.plot(time,K2,color=kcolor)
+        a0.plot(time,X2,color=xcolor)
+        a0.plot(time,Na2,color=nacolor)
+        a1=plt.subplot(gs[1])
+        a1.plot(time,Vm,'k')
+        a1.plot (time,Cl,color=clcolor)
+        a1.plot(time,K,color=kcolor)
+        a2=plt.subplot(gs[2])
+        a2.plot(time,W,color=wcolor,label='relative volume')
+        #plt.savefig(title)
+        #plt.show()
+        
+    if graph==2:
+        a0.plot (time,Cl2,color=clcolor,linestyle=ls)
+        a0.plot(time,K2,color=kcolor,linestyle=ls)
+        a0.plot(time,X2,color=xcolor,linestyle=ls)
+        a0.plot(time,Na2,color=nacolor,linestyle=ls)
+        a1.plot(time,Vm,'k')
+        a1.plot (time,Cl,color=clcolor,linestyle=ls)
+        a1.plot(time,K,color=kcolor,linestyle=ls)
+        a2.plot(time,W,color=wcolor,label='relative volume',linestyle=ls)
         plt.savefig(title)
         plt.show()
     
     print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1
-    print 'w', w, 'radius', rad
-    return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K, X2, w, z_delt, xe_delt, gkcc_delt
+    print 'w', w, 'radius', rad, 'z', z
+    print 'ecl', Cl[-1]
+    return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K2, X2, w, z_delt, xe_delt, gkcc_delt, a0, a1, a2, np.log10(jp*F), osi, ose
 
 def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     nai=[]

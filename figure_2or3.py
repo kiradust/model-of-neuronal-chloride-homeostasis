@@ -12,7 +12,7 @@ import numpy as np
 from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
 
-def delta_gs(Gk=[50],Gna=[10],Gkcc=[10],Gcl=[10],molinit=0):
+def delta_gs(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
     vm=[]
     cli=[]
     nai=[]
@@ -61,6 +61,8 @@ def delta_gs(Gk=[50],Gna=[10],Gkcc=[10],Gcl=[10],molinit=0):
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
         df.append(ev[-1]-ecl[-1])
+        
+    print ecl[-1], ek[-1], ev[-1]
     
     return np.log10(chosen),ecl,ek,ena,df,ev,w
 
@@ -83,10 +85,12 @@ def f2a():
 def f3a():
     dg=plm(tk=60,tt=300)
     minithreefig([dg[11][1:-1],dg[14][1:-1],dg[13][1:-1],dg[16][1:-1],dg[10][1:-1],dg[24][1:-1]],'k',yl=[[-100,-70],[1.9e-12,2.05e-12],[0,2.4e-6]])
-    plt.savefig('f3a.eps')
+    #plt.savefig('f3a.eps')
     plt.show()
     print dg[24][-1]
     print dg[14][0]
+    print dg[17][0]
+    print dg[17][-1]
     print dg[14][-1]
     return
     
@@ -100,7 +104,7 @@ def f3b():
 def f3d():
     molint=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
     gp=zplm(molinit=molint)
-    minifig([gp[0],gp[3],gp[2],[],[],gp[5],gp[11]],x=0)
+    minifig([gp[0],gp[3],gp[2],[],[],gp[5],gp[8]],x=0)
     plt.savefig('f3d.eps')
     plt.show()
     return

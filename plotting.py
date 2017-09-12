@@ -88,4 +88,4 @@ def minithreefig(delta,colour,x=0,yl=[[-100,-70],[1.0e-13,1.6e-13],[-0.95,-0.8]]
     if x!=0:
         ax2.axvline(x=x,linestyle='--',color='0.8')
     ax2.set_ylim(yl[2])
-    return
+    return ax0, ax1, ax2

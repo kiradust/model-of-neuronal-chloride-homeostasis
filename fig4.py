@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from pylab import rcParams
 import numpy as np
+from figure_1 import f1c
 rcParams['figure.figsize'] = 8,8
 
 sym=['-',':','--','-.']
@@ -29,14 +30,14 @@ def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):
     
     return
     
-def f4b(init_x=range(25,586,40)):
+def f4b(init_x=range(25,586,40),new=0,l='-',title='f4b.eps',a=0,b=0):
     endv=[]
     endk=[]
     endcl=[]
     endw =[]
     
     for i in init_x:
-        end=plm(xinit=i*1e-3,k_init=0,tt=1000,osmofix=False)
+        end=plm(xinit=i*1e-3,k_init=0,tt=1000,osmofix=False,neww=new,ls=l)
         endv.append(end[9])
         endk.append(end[6])
         endcl.append(end[7])
@@ -46,30 +47,43 @@ def f4b(init_x=range(25,586,40)):
         print end[7]
     plt.figure()
     gs = gridspec.GridSpec(2, 1, height_ratios=[1.5, 1]) 
-    a=plt.subplot(gs[0])
-    a.plot(init_x,endcl,color=clcolor)
-    a.plot(init_x,endcl,'bo')
-    a.plot(init_x,endk,color=kcolor)
-    a.plot(init_x,endk,'ro')
-    a.plot(init_x,endv,'k')
-    a.plot(init_x,endv,'ko')
+    if a==0:
+        a=plt.subplot(gs[0])
+    a.plot(init_x,endcl,color=clcolor,linestyle=l)
+    a.plot(init_x,endcl,'bo',linestyle=l)
+    a.plot(init_x,endk,color=kcolor,linestyle=l)
+    a.plot(init_x,endk,'ro',linestyle=l)
+    a.plot(init_x,endv,'k',linestyle=l)
+    a.plot(init_x,endv,'ko',linestyle=l)
     a.set_ylim([-100,-70])
-    b=plt.subplot(gs[1])
-    b.plot(init_x,endw,color=wcolor)
-    b.plot(init_x,endw,'ko')
+    if b==0:
+        b=plt.subplot(gs[1])
+    b.plot(init_x,endw,color=wcolor,linestyle=l)
+    b.plot(init_x,endw,'ko',linestyle=l)
     b.set_ylim([0,8e-12])
-    plt.savefig('f4b.eps')
-    plt.show()
+    plt.savefig(title)
+    #plt.show()
     
-    return
+    return a,b
     
-def f4c(gX=1e-8,tt=540,xt=180,xend=180,xflux=4e-7):
-    dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend)
-    minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,3.3e-12],[154.5,158.5]])
-    plt.savefig('f4c.eps')
-    plt.show()
+def f4c(gX=1e-8,tt=540,xt=180,xend=180,xflux=4e-7,new=0,title='f4c.eps'):
+    dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,graph=0)
+    ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,3.3e-12],[153,183]])
     print (dex[16][-1]-dex[14][-1])
-    print (dex[16][8000]-dex[14][8000])
+    print (dex[16][135000]-dex[14][135000])
+    if new!=0:
+        print new
+        delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=new,graph=0)
+        ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
+        ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
+        ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
+        ax1.plot(delta[11][1:-1],delta[10][1:-1],color=wcolor,ls='--') #volume
+        ax2.plot(delta[11][1:-1],delta[20][1:-1],color=xcolor,ls='--') #conc X
+        print (delta[16][-1]-delta[14][-1])
+        print (delta[16][135000]-delta[14][135000])
+        print len(delta[16])
+    plt.savefig(title)
+    plt.show()
     return
     
 def sf4c(GX=[5e-10,1e-9,5e-9,7e-9,1e-8,2e-8],tt=600,xt=25,ratio=0.98,xend=0):
@@ -96,12 +110,19 @@ def f4e(Z=range(-120,-50),moldelt=1e-12):
         newx.append(i)
     return zee[0],Z,zee,newx
     
-def f4d(f=2e-3):
-    dxe=plm(graph=1,gx=0,xt=120,two=0,tt=360,f4d=f)
-    minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],xcolor,yl=[[-100,-70],[1.85e-12,2.0e-12],[0,0.12]])
+def f4d(f=2e-3,new=0,title='f4d.eps'):
+    dxe=plm(gx=0,xt=120,two=0,tt=360,f4d=f,neww=0,graph=0)
+    a0,a1,a2=minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],xcolor,yl=[[-100,-70],[1.85e-12,2.0e-12],[0,0.12]])
     print (dxe[16][-1]-dxe[14][-1])
     print (dxe[16][8000]-dxe[14][8000])
-    plt.savefig('f4d.eps')
+    if new==1:
+        delta=plm(gx=0,xt=120,two=0,tt=360,f4d=f,neww=1,graph=0)
+        a0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
+        a0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
+        a0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
+        a1.plot(delta[11][1:-1],delta[10][1:-1],color=wcolor,ls='--') #volume
+        a2.plot(delta[11][1:-1],delta[23][1:-1],color=xcolor,ls='--') #conc X
+    plt.savefig(title)
     plt.show()
     return
 
@@ -133,8 +154,18 @@ def sf4fb():
     plt.show()
     return
 
-def neww():
-    a=plm(neww=1,ton=10,toff=90,tt=200)
-    minithreefig([a[11][1:-1],a[14][1:-1],a[13][1:-1],a[16][1:-1],a[10][1:-1],a[20][1:-1]],xcolor)
-    plt.show()
+def neww(neww=1):
+    #m=f1c()
+    #f1c(new=1,l='--',g1=m[-3],g2=m[-2],g3=m[-1])
+    #plt.savefig('f8a.eps')
+    #plt.show()
+    
+    #k,n=f4b(title='f8b.eps')
+    #f4b(new=1,l='--',a=k,b=n,title='f8b.eps')
+    #plt.show()
+    
+    f4c(new=neww,title='f8cc.eps')
+    
+    #f4d(new=1,title='f8d.eps')
+    
     return
