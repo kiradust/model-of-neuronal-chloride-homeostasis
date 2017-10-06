@@ -1,5 +1,5 @@
 from plm_singlecomp_withkcc2 import plm, zp, F
-from plotting import minifig, minithreefig, minifigtwoaxes,twoaxes,xcolor,clcolor,wcolor,kcolor
+from plotting import minifig, minithreefig, minifigtwoaxes,twoaxes,xcolor,clcolor,wcolor,kcolor,nacolor
 import matplotlib.pyplot as plt
 from pylab import rcParams
 from fig4 import f4e
@@ -9,21 +9,24 @@ from matplotlib import gridspec
 
 sym=['-k',':k','--k','-.k']
 
-def f5a(new=0):
+def f5a(new=0,title='f5a.eps'): #doubles as f6a when new==1
     dez=plm(dz=2.5e-7,two=1,xt=180,tt=540,ztarget=-1)
-    a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k',yl=[[-100,-70],[1.8e-12,3.3e-12],[-0.95,-0.8]])
+    if new==0:
+        a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,3.3e-12],[-0.95,-0.8]])
+    else:
+        a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[18][1:-1],dez[22][1:-1]],xcolor,yl=[[-100,-70],[13,19],[-0.95,-0.8]])
     print (dez[16][-1]-dez[14][-1])
     print (dez[16][135000]-dez[14][135000])
     if new==1:
-        delta=plm(dz=2.5e-7,two=1,xt=180,tt=540,ztarget=-1,neww=1)
+        delta=plm(dz=2.5e-7,two=1,xt=180,tt=540,ztarget=-1,neww=4)
         a0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
         a0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
         a0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
-        a1.plot(delta[11][1:-1],delta[10][1:-1],color=wcolor,ls='--') #volume
+        a1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='--') #nai
         a2.plot(delta[11][1:-1],delta[22][1:-1],color=xcolor,ls='--')
         print (delta[16][-1]-delta[14][-1])
+    plt.savefig(title)
     plt.show()
-    plt.savefig('f5anew.eps')
     return
 
 def f5b(moldelt=0):

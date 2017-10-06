@@ -37,7 +37,7 @@ def twoaxes(x,y11,y12,y13,y22):
     plt.show()
     return
     
-def minifig(delta,x=0,yl=[[-100,75],[1.5e-12,4e-12]]):
+def minifig(delta,x=0, yl=[[-100,40],[1.75e-12,2.75e-12]]):
     plt.figure()
     gs = gridspec.GridSpec(2, 1, height_ratios=[1.5, 1]) 
     ax0=plt.subplot(gs[0])

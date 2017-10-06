@@ -6,7 +6,7 @@ Created on Wed Sep 28 17:29:22 2016
 @title: Figure 4
 """
 from plm_singlecomp_withkcc2 import plm, zp
-from plotting import minifig, minithreefig, minifigtwoaxes,twoaxes,xcolor,clcolor,wcolor,kcolor
+from plotting import minifig, minithreefig, minifigtwoaxes,twoaxes,xcolor,clcolor,wcolor,kcolor,nacolor
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from pylab import rcParams
@@ -66,19 +66,37 @@ def f4b(init_x=range(25,586,40),new=0,l='-',title='f4b.eps',a=0,b=0):
     
     return a,b
     
-def f4c(gX=1e-8,tt=540,xt=180,xend=180,xflux=4e-7,new=0,title='f4c.eps'):
+def f4c(gX=1e-8,tt=540,xt=180,xend=180,xflux=4e-7,new=0,title='f4c.eps'): #doubles as f6c when new!=0
     dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,graph=0)
-    ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,3.3e-12],[153,183]])
+    if new==0:
+        ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,3.3e-12],[153,183]])
+    else:
+        ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[18][1:-1],dex[10][1:-1]],'k',yl=[[-100,-70],[13,19],[1.8e-12,3.3e-12]])
     print (dex[16][-1]-dex[14][-1])
     print (dex[16][135000]-dex[14][135000])
-    if new!=0:
-        print new
-        delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=new,graph=0)
-        ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
-        ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
-        ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
-        ax1.plot(delta[11][1:-1],delta[10][1:-1],color=wcolor,ls='--') #volume
-        ax2.plot(delta[11][1:-1],delta[20][1:-1],color=xcolor,ls='--') #conc X
+    
+    delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=3,graph=0)
+    ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
+    ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
+    ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
+    print (delta[16][-1]-delta[14][-1])
+    print (delta[16][135000]-delta[14][135000])
+    print len(delta[16])
+    
+    if new==0:
+        ax1.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='--') #volume
+        ax2.plot(delta[11][1:-1],delta[20][1:-1],color=xcolor,ls='--') #x concentration
+        
+    else:
+        ax1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='--') #nai
+        ax2.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='--') #volume
+        
+        delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=5,graph=0)
+        ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='-.')
+        ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='-.')
+        ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='-.')
+        ax1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='-.') #nai
+        ax2.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='-.') #volume
         print (delta[16][-1]-delta[14][-1])
         print (delta[16][135000]-delta[14][135000])
         print len(delta[16])

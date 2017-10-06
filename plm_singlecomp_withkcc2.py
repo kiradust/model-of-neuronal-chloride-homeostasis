@@ -99,7 +99,7 @@ default_P=-30601
 vw=0.018 #partial molar volume of water, dm3/mol
 pw=0.0015 #osmotic permeability, biological membrane (muscle? unknown), dm s
 km=6*10**(-7) #extensional rigidity of RBC at 23 deg, Mohandas and Evans (1994), N/dm
-km2=1.0*10**(2)
+km2=6.0*10**(1)
 density=1.0 #kg/dm3 = g/ml --> assume close to 1 (density of water)
 hp=1e-3
 hydrop=0
@@ -165,6 +165,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     pdinit=-6.0
     pd=default_p
     em=(default_p-pdinit)/(12.0*10**4)/5
+    jeffconstant=p*(na/nao)**3
     
     if two==1:
         zx=Zx
@@ -209,7 +210,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                 cle-=f4d*4e-4*1
         
         jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
-        
+                
+        if neww==4 or neww==5:
+            jp=jeffconstant
+            
         if (toff>t) and (t>ton):
             if pd>pdinit:
                 pd-=em
@@ -269,10 +273,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             w2=w+dt*(vw*pw*sa*(osi-ose)+hp*dt/density*km*(sarest-sa)/sarest)
         elif neww==2:
             w2=w+dt*(vw*pw*sa*(osi-ose-os_choose))
-        elif neww==3:
+        elif neww==3 or neww==5:
             hydrop=4.0*km2*np.pi*(1.0-rad0/rad)/(R*F)
             w2=w+dt*(vw*pw*sa*(osi-ose-hydrop))
-        
+
         #correct ionic concentrations by volume change
         na=(na*w)/w2
         k=(k*w)/w2
