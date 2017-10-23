@@ -49,7 +49,7 @@ def minifig(delta,x=0, yl=[[-100,40],[1.75e-12,2.75e-12]]):
         ax0.axvline(x=x,linestyle='--',color='0.8')
     ax1=plt.subplot(gs[1])
     ax1.plot(delta[0],delta[6],color=wcolor)
-    ax1.set_ylim(yl[1])
+    #ax1.set_ylim(yl[1])
     if x!=0:
         ax1.axvline(x=x,linestyle='--',color='0.8')
     return

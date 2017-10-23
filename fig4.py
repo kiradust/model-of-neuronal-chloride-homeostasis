@@ -19,7 +19,7 @@ sym=['-',':','--','-.']
 def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):   
     plt.figure()
     for i in range(len(init_x)):
-        endcl=plm(xinit=init_x[i],tt=240, k_init=0,osmofix=True)
+        endcl=plm(xinit=init_x[i],tt=2400, k_init=0,osmofix=True)
         plt.subplot(2,1,1)
         plt.plot(endcl[11][1:-1],endcl[20][1:-1],'m'+sym[i])
         plt.subplot(2,1,2)
@@ -66,28 +66,24 @@ def f4b(init_x=range(25,586,40),new=0,l='-',title='f4b.eps',a=0,b=0):
     
     return a,b
     
-def f4c(gX=1e-8,tt=540,xt=180,xend=180,xflux=4e-7,new=0,title='f4c.eps'): #doubles as f6c when new!=0
+def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps'): #doubles as f6c when new!=0
     dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,graph=0)
-    if new==0:
-        ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,3.3e-12],[153,183]])
-    else:
-        ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[18][1:-1],dex[10][1:-1]],'k',yl=[[-100,-70],[13,19],[1.8e-12,3.3e-12]])
     print (dex[16][-1]-dex[14][-1])
-    print (dex[16][135000]-dex[14][135000])
-    
-    delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=3,graph=0)
-    ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
-    ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
-    ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
-    print (delta[16][-1]-delta[14][-1])
-    print (delta[16][135000]-delta[14][135000])
-    print len(delta[16])
+    print (dex[16][350]-dex[14][350])
     
     if new==0:
-        ax1.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='--') #volume
-        ax2.plot(delta[11][1:-1],delta[20][1:-1],color=xcolor,ls='--') #x concentration
-        
+        ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor,yl=[[-100,-70],[1.9e-12,2.5e-12],[154,157]])
+    
     else:
+        ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[18][1:-1],dex[10][1:-1]],'k',yl=[[-100,-70],[13,19],[1.8e-12,10e-12]])
+
+        delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=3,graph=0)
+        ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
+        ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
+        ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
+        print (delta[16][-1]-delta[14][-1])
+        print (delta[16][350]-delta[14][350])
+        print len(delta[16])
         ax1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='--') #nai
         ax2.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='--') #volume
         
@@ -98,7 +94,7 @@ def f4c(gX=1e-8,tt=540,xt=180,xend=180,xflux=4e-7,new=0,title='f4c.eps'): #doubl
         ax1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='-.') #nai
         ax2.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='-.') #volume
         print (delta[16][-1]-delta[14][-1])
-        print (delta[16][135000]-delta[14][135000])
+        #print (delta[16][135000]-delta[14][135000])
         print len(delta[16])
     plt.savefig(title)
     plt.show()
@@ -129,10 +125,10 @@ def f4e(Z=range(-120,-50),moldelt=1e-12):
     return zee[0],Z,zee,newx
     
 def f4d(f=2e-3,new=0,title='f4d.eps'):
-    dxe=plm(gx=0,xt=120,two=0,tt=360,f4d=f,neww=0,graph=0)
-    a0,a1,a2=minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],xcolor,yl=[[-100,-70],[1.85e-12,2.0e-12],[0,0.12]])
+    dxe=plm(gx=0,xt=360,two=0,tt=1800,f4d=f,neww=0,graph=0)
+    a0,a1,a2=minithreefig([dxe[11][1:-1],dxe[14][1:-1],dxe[13][1:-1],dxe[16][1:-1],dxe[10][1:-1],dxe[23][1:-1]],xcolor,yl=[[-100,-70],[1.85e-12,2.0e-12],[0,0.09]])
     print (dxe[16][-1]-dxe[14][-1])
-    print (dxe[16][8000]-dxe[14][8000])
+    print (dxe[16][350]-dxe[14][350])
     if new==1:
         delta=plm(gx=0,xt=120,two=0,tt=360,f4d=f,neww=1,graph=0)
         a0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')

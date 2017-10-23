@@ -13,7 +13,7 @@ plm(p,graph)
 p := desired pump rate
 graph := {1 iff a graph is desired as output; and any other value otherwise}
 
-zplm(z,gkcc,gcl)
+zplm(z,gkcc,gcl) 
 ==> runs the parametric solution over log pump rates in P for impermeant anion charge of z
 z := charge of impermeant anions
 gkcc := desired KCC2 conductance constant {default is 0}
@@ -71,10 +71,10 @@ from plotting import clcolor, kcolor, xcolor,nacolor,wcolor
 R=26.725*1e-3
 F=96485.0 #R (RT/F) in Volts, where F is Faraday's constant in C/mol, and T is 37 deg C
 n=200 #points to plot 
-gna=2e-7
-gk=7e-7
-gcl=2e-7 #gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
-gkcc=2e-7 #1 is 'high' (Doyon) - use Chris's?
+gna=2e-3/F
+gk=7e-3/F
+gcl=2e-3/F #gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
+gkcc=2e-3/F #1 is 'high' (Doyon) - use Chris's?
 ck=2
 cna=3 #cna,ck: pump (ATPase) stoichiometries
 rad=5*1e-5 #radius in um convert to dm
@@ -92,19 +92,19 @@ cle=clo
 xe1=-1*(cle-nae-ke)
 xe=xe1*0.2
 ose=xe1+cle+nae+ke
-P=range(-60000,-28750) 
-#P=range(-30602,-30601) 
-default_p=-0
-default_P=-30601
+P=range(-70000,-38000) 
+#P=range(-40456,-40455) 
+default_p=-1
+default_P=-40456
 vw=0.018 #partial molar volume of water, dm3/mol
 pw=0.0015 #osmotic permeability, biological membrane (muscle? unknown), dm s
 km=6*10**(-7) #extensional rigidity of RBC at 23 deg, Mohandas and Evans (1994), N/dm
-km2=6.0*10**(1)
+km2=2.5*10**(1)
 density=1.0 #kg/dm3 = g/ml --> assume close to 1 (density of water)
 hp=1e-3
 hydrop=0
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=123.029e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0):
     #create plotting arrays
     Vm=[]
     K=[]
@@ -137,7 +137,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     FinvCAr=F/(C*Ar) #(F/C*area scaling constant)
     sarest=sa
     
-    na=13.845e-3
+    na=14.002e-3
     x=xinit
     #cl=((os_init-na-k)*z+na+k)/(1+z)
     cl=clinit
@@ -162,9 +162,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     zxm=z
     zx=z
     cle=clo
-    pdinit=-6.0
+    pdinit=-5.0
     pd=default_p
-    em=(default_p-pdinit)/(12.0*10**4)/5
+    em=(default_p-pdinit)/(12.0*10**4)/8
     jeffconstant=p*(na/nao)**3
     
     if two==1:
@@ -194,10 +194,10 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             gkcc_delt.append(pkcc)
             ctr+=1
         
-        if tk+180>t>tk:
-            pkcc += 1e-11    #control switch for gkkc ramp
+        if tk+360>t>tk:
+            pkcc += 1e-12    #control switch for gkkc ramp
 
-        if dz!=0 and xt<t<xt+180 and xtemp>0 and xm>0:
+        if dz!=0 and xt<t<xt+420 and xtemp>0 and xm>0:
             xtemp+=dz
             xm-=dz
 
@@ -205,9 +205,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             z=(zxm*xm+zx*xtemp)/(xm+xtemp)
         
         if f4d!=0:
-            if xt+120>t>xt:
-                xe+=f4d*4e-4
-                cle-=f4d*4e-4*1
+            if xt+400>t>xt:
+                xe+=f4d*12e-6
+                cle-=f4d*12e-6*1
         
         jp=p*(na/nao)**3 #cubic pump rate update (dependent on sodium gradient)
                 
@@ -243,7 +243,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                     tt=t+180
                 else:
                     xtemp+=xflux
-                    tt=t+180
+                    tt=t+1000
             else:
                 if (min(z,zx)<=ztarget<=max(z,zx)):
                     print 'anions stopped diffusing at '+str(t)
@@ -258,9 +258,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                 
         if xt+xend>t>xt:
             if xflux!=0:
-                xtemp+=xflux
+                xtemp+=xflux/10
             else:
-                xtemp+=dx 
+                xtemp+=dx/10 
             
         #update volume
         x=xm+xtemp
@@ -274,7 +274,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         elif neww==2:
             w2=w+dt*(vw*pw*sa*(osi-ose-os_choose))
         elif neww==3 or neww==5:
-            hydrop=4.0*km2*np.pi*(1.0-rad0/rad)/(R*F)
+            hydrop=4.0*km2*np.pi*(rad/rad0-1)/(R*F)
             w2=w+dt*(vw*pw*sa*(osi-ose-hydrop))
 
         #correct ionic concentrations by volume change
@@ -311,8 +311,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         a1.plot(time,K,color=kcolor)
         a2=plt.subplot(gs[2])
         a2.plot(time,W,color=wcolor,label='relative volume')
-        #plt.savefig(title)
-        #plt.show()
+        plt.savefig(title)
+        plt.show()
         
     if graph==2:
         a0.plot (time,Cl2,color=clcolor,linestyle=ls)
@@ -345,9 +345,11 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     exi=[]
     ev=[]
     w=[]
+    Q=[]
     #beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
     for p in P:
         q=10**(p/10000.0)/(F*R)
+        Q.append(q)
         if z==-1:
             theta=0.5*ose/(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))
         else:
@@ -359,7 +361,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
         ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc)*beta))
         cli.append(cle*np.exp(+v/R-2*q*gkcc*beta))
         xi.append(ose-nai[-1]-cli[-1]-ki[-1])
-        pi.append(1000.0*np.log10(F*R*q/(((nae*np.exp(-v/R-3*q/gna))/nae)**3)))
+        pi.append(1000.0*np.log10(F*R*q/(((np.exp(-v/R-3*q/gna)))**3)))
         
         ek.append(1000*R*np.log(ke/ki[-1]))
         ena.append(1000*R*np.log(nae/nai[-1]))
@@ -382,18 +384,18 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     plt.savefig('pump_mV.eps')
     plt.show()
     
-    return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w
+    return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w, Q
     
-def checkpara(time=50000):
+def checkpara(time=99000):
     ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-    T=[-6000,-5000,-4500,-4000,-3500,-3000,-2000,-1000,0,1000,2000,3000,4000]
+    T=[-7000,-6000,-5000,-4500,-4000,-3500,-3000,-2000,-1000,0,1000,2000,3000]
     
     for k in T:
         q=10**(k/1000.0)/F
-        if k>-4000:
-            time=1000
+        if k>-3500:
+            time=2000
         elif k>-5000:
-            time=20000
+            time=50000
             
         a=plm(p=q,tt=time,graph=1)
         print len(a)

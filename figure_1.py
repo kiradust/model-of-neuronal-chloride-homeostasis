@@ -18,7 +18,7 @@ def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3]):
     leg=[]    
     plt.figure()
     for i in range(len(init_cl)):
-        endcl=plm(clinit=init_cl[i],tt=180,osmofix=False,k_init=0)
+        endcl=plm(clinit=init_cl[i],tt=1800,osmofix=False,k_init=0)
         plt.subplot(2,1,1)
         plt.plot(endcl[11],endcl[17],color=clcolor,linestyle=sym[i])
         plt.subplot(2,1,2)
