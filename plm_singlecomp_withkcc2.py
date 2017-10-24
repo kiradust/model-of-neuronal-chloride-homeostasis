@@ -349,7 +349,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     #beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
     for p in P:
         q=10**(p/10000.0)/(F*R)
-        Q.append(q)
+        Q.append(q*R)
         if z==-1:
             theta=0.5*ose/(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))
         else:

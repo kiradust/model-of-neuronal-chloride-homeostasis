@@ -154,10 +154,10 @@ def f5d():
             #minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k')
             w[abs(int(a))].append(np.log10(dez[10][-1]))
             z[abs(int(a))].append(dez[22][-1])
-            print dez[14][-1]
+            print dez[14][100]-dez[14][-1]
             print (dez[10][-1])/dez[10][0]
         plt.plot(z[abs(int(a))],w[abs(int(a))],sym[abs(int(a))]+'o')
-    plt.savefig('f5e.eps')
+    #plt.savefig('f5e.eps')
     plt.show()
     return w,z
 
