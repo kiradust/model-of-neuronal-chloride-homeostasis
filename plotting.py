@@ -9,6 +9,7 @@ from matplotlib import gridspec
 from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
 
+# colours chosen from colorbrewer2.org
 clcolor='#1b9e77'
 kcolor='#7570b3'
 xcolor='#d95f02'
@@ -18,22 +19,17 @@ wcolor='k'
 ys = [1,1.5,2,2.5,5]
 xs = range(len(ys))
 
-
-#scatter(xs,ys)
-
 def minmax(data):
     return min(data), max(data)
-
-#etframes.add_range_frame(gca(), xbounds=minmax(xs),ybounds=minmax(ys))
     
-def twoaxes(x,y11,y12,y13,y22):
+def twoaxes(x,y11,y12,y22,x2=None):
+    if x2==None:
+        x2=x
     fig, ax1 = plt.subplots()
-    ax1.plot(x,y11,color=clcolor,linestyle='-')
-    ax1.plot(x,y12,color=clcolor,linestyle='--')
-    ax1.plot(x,y13,color=xcolor,linestyle='-')
+    ax1.plot(x,y11,color='k',linestyle='-')
+    ax1.plot(x2,y12,color='k',linestyle='--')
     ax2 = ax1.twinx()
-    ax2.set_ylim([1.0,2.0])
-    ax2.plot(x,y22,color=wcolor)
+    ax2.plot(x,y22,color=nacolor)
     plt.show()
     return
     

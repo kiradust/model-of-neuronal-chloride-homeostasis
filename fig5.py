@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Kira
+@title: Figure 5
+"""
+
 from plm_singlecomp_withkcc2 import plm, zp, F, default_p, default_P, R, ose, cle, nae, ke, gna, gk, gcl, gkcc, beta, xe
 from plotting import minifig, minithreefig, minifigtwoaxes,twoaxes,xcolor,clcolor,wcolor,kcolor,nacolor
 import matplotlib.pyplot as plt
@@ -12,8 +18,10 @@ sym=['-k',':k','--k','-.k']
 def f5a(new=0,title='f5a.eps',dz=2.5e-7,tt=1800): #doubles as f6a when new==1
     dez=plm(dz=dz,two=1,xt=360,tt=tt,ztarget=-1)
     if new==0:
+        print "Figure 5A"
         a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,2.4e-12],[-1.1,-0.8]])
     else:
+        print "Figure 6A"
         a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[18][1:-1],dez[22][1:-1]],xcolor,yl=[[-100,-70],[13,19],[-1.1,-0.8]])
     print (dez[16][-1]-dez[14][-1])
     if new==1:
@@ -24,11 +32,12 @@ def f5a(new=0,title='f5a.eps',dz=2.5e-7,tt=1800): #doubles as f6a when new==1
         a1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='--') #nai
         a2.plot(delta[11][1:-1],delta[22][1:-1],color=xcolor,ls='--')
         print (delta[16][-1]-delta[14][-1])
-    plt.savefig(title)
+    #plt.savefig(title)
     plt.show()
     return
 
 def f5b(moldelt=0):
+    print "\nFigure 5B"
     XF=[-1.20,-1.15,-1.1,-1.05,-1.0,-0.95,-0.9,-0.85,-0.8,-0.75,-0.7,-0.65,-0.6,-0.55,-0.501]
     XFp=[]
     cl=[]
@@ -107,10 +116,6 @@ def f5b(moldelt=0):
     a0.plot(Z,ek,color=kcolor)
     a0.plot(Z,ev,'k')
     a0.set_ylim([-110,-60])
-    #a1=plt.subplot(gs[1])
-    #a1.plot(zi,zee[11],color='k') #vol
-    #a1.plot(z,w,'ko')
-    #a1.set_ylim([0,5e-12])
     a2=plt.subplot(gs[1])
     a2.plot(Z,xi,color='m') #conc X
     a2.plot(Z,x,'mo')
@@ -119,16 +124,16 @@ def f5b(moldelt=0):
     a3.plot(Z,df,'ko')
     a3.plot(Z,df2,'k-')
     a3.set_ylim([9,12])
-    plt.savefig('f5b.eps')
+    #plt.savefig('f5b.eps')
     plt.show()
     return
 
 def f5c(ttt=3000,ratio=0.8,md=1e-12,new=0,title='f5c.eps'):
+    print "\nFigure 5C"
     dez=plm(gx=1e-8,xt=360,two=1,xend=0,moldelt=md,xflux=4e-8,ztarget=-1,tt=ttt,Zx=-1.5)
     print(len(dez[16]))
     a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],'k',yl=[[-100,-70],[1e-12,3.3e-12],[-1.1,-0.8]])
     print (dez[16][-1]-dez[14][-1])
-    #print (dez[16][135000]-dez[14][135000])
     if new==1:
         delta=plm(gx=1e-8,xt=240,two=1,xend=0,moldelt=md,xflux=0.3*1e-6,ztarget=-1,tt=ttt,neww=1)
         a0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
@@ -137,12 +142,12 @@ def f5c(ttt=3000,ratio=0.8,md=1e-12,new=0,title='f5c.eps'):
         a1.plot(delta[11][1:-1],delta[10][1:-1],color=wcolor,ls='--') #volume
         a2.plot(delta[11][1:-1],delta[22][1:-1],color=xcolor,ls='--')
         print (delta[16][-1]-delta[14][-1])
-        #print (delta[16][135000]-delta[14][135000])
-    plt.savefig(title)
+    #plt.savefig(title)
     plt.show()
     return
 
 def f5d():
+    print "\nFigure 5D"
     w=[[],[],[],[]]
     z=[[],[],[],[]]
     ZX=[-0.5,-1,-2,-3]
@@ -157,11 +162,6 @@ def f5d():
             print dez[14][100]-dez[14][-1]
             print (dez[10][-1])/dez[10][0]
         plt.plot(z[abs(int(a))],w[abs(int(a))],sym[abs(int(a))]+'o')
-    #plt.savefig('f5e.eps')
+    #plt.savefig('f5d.eps')
     plt.show()
     return w,z
-
-def new5():
-    f5a(new=1)
-    #f5c(ttt=2000,new=1,title='f8e.eps')
-    return

@@ -11,10 +11,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
+prange=range(-60000,-33000)
 
-prange=range(-50000,-33000)
-
-#delta_gs keeps the effective pump rate constant, while delta_gs3 uses a constant p and P_eff dependent on the final sodium concentration
+# delta_gs keeps the effective pump rate constant, while delta_gs3 uses a constant p and P_eff dependent on the final sodium concentration (checks back to find corresponding values)
 
 def delta_gs(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
     vm=[]
@@ -31,6 +30,7 @@ def delta_gs(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
     df=[]
     chosen=[]
     q=10**(default_P/10000.0)
+    
     for i in range(max(len(Gcl),len(Gkcc),len(Gk),len(Gna))):
         for a in Gk, Gna, Gkcc, Gcl:
             if len(a)<=i:
@@ -45,7 +45,7 @@ def delta_gs(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
         if gk*gcl+gkcc*gcl+gk*gkcc !=0:
             beta=1.0/(gk*gcl+gkcc*gcl+gk*gkcc)
         else:
-            print "yep"
+            print "invalid conductances: division by 0"
         
         if z==-1:
             theta=0.5*ose/(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))
@@ -85,6 +85,8 @@ def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
     df=[]
     chosen=[]
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
+    
+    # only operate on conductance which is changing
     for i in range(max(len(Gcl),len(Gkcc),len(Gk),len(Gna))):
         for a in Gk, Gna, Gkcc, Gcl:
             if len(a)<=i:
@@ -97,24 +99,27 @@ def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
         gcl=Gcl[i]*1.0e-4/F
         found=False
         
+        # run through all pump rates (analytical solution)
         for l in prange:
             q=np.float64(10**(l/10000.0)/(F*R))
             
             if gk*gcl+gkcc*gcl+gk*gkcc !=0:
                 beta=1.0/(gk*gcl+gkcc*gcl+gk*gkcc)
             else:
-                print "yep"
+                print "invalid conductances: division by 0"
 
             if z==-1:
                 theta=0.5*ose/(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))
             else:
                 theta=(-z*ose+np.sqrt(z**2*ose**2+4*(1-z**2)*cle*np.exp(-2*q*gkcc*beta)*(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))))/(2*(1-z)*((nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))))    
             v=(-np.log(theta))*R
-            #pi=np.log10(F*R*q/(((np.exp(-v/R-3*q/gna)))**3))
+            # efficient coding for expression pi=np.log10(F*R*q/(((np.exp(-v/R-3*q/gna)))**3))
             pi=np.exp(-v/R-3*q/gna)
             pi=-3*np.log10(pi)
             pi+=np.log10(F*R*q)
             
+            # match constant pump rates to determine which pair (l, na) produce (very close to) the default pump rate
+            # append to arrays
             if np.abs(pi-default_p)<0.01 and found==False:
                 vm.append(v)
                 nai.append(nae*np.exp(-v/R-3*q/gna))
@@ -130,16 +135,38 @@ def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
                 ev.append(1000.0*v)
                 df.append(ev[-1]-ecl[-1])
                 found=True
-
+        
+        # if when checking for correct pair (l, na) none is found, notify (this will mean that no figure is generated)
         if found==False:
-            print 'uh-oh',i,pi,default_p
+            print 'no match',i,pi,default_p
+            # may be fixed by increasing bounds of prange (i.e. larger search space)
 
     return np.log10(chosen),ecl,ek,ena,df,ev,w
     
+def f2():
+    print "Figure 2A"
+    minifig(delta_gs3(Gk=range(1,1000),Gna=[20],Gkcc=[20],Gcl=[20]),x=np.log10(70))
+    #plt.savefig('f2a.eps')
+    plt.show()
+    print "\nFigure 2B"
+    minifig(delta_gs3(Gna=range(1,1000),Gk=[70],Gkcc=[20],Gcl=[20]),x=np.log10(20))
+    #plt.savefig('f2b.eps')
+    plt.show()
+    print "\nFigure 2C"
+    minifig(delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[20]),x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12]])
+    #plt.savefig('f2c.eps')
+    plt.show()
+    print "\nFigure 2D"
+    minifig(delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[0]),x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12]])
+    #plt.savefig('f2d.eps')
+    plt.show()
+    return
+    
 def f3a():
     dg=plm(tk=120,tt=600)
-    minithreefig([dg[11][1:-1],dg[14][1:-1],dg[13][1:-1],dg[16][1:-1],dg[10][1:-1],dg[24][1:-1]],'k',yl=[[-100,-70],[1.92e-12,1.98e-12],[0,6e-7]])
-    plt.savefig('f3a.eps')
+    print "Figure 3A"
+    minithreefig([dg[11][4:-1],dg[14][4:-1],dg[13][4:-1],dg[16][4:-1],dg[10][4:-1],dg[24][4:-1]],'k',yl=[[-100,-70],[1.92e-12,1.98e-12],[0,6e-7]])
+    #plt.savefig('f3a.eps')
     plt.show()
     print dg[24][-1]
     print dg[14][0]
@@ -150,36 +177,25 @@ def f3a():
     
 def f3b():
     dg=delta_gs3(Gkcc=range(1,1000),Gna=[20],Gk=[70],Gcl=[20])
+    print "\nFigure 3B"
     minithreefig([dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k',x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12],[0,24]])
-    plt.savefig('f3b.eps')
+    #plt.savefig('f3b.eps')
     plt.show()
     return
     
-def f3d(new=0,title='f3d.eps'): #doubles as f6f when new=1
+def f3d(new=0,title='f3d.eps'): #doubles as f6f when new==1
     molint=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
     if new==0:
         gp=zplm(molinit=molint)
+        print "\nFigure 3D"
         minifig([gp[0],gp[3],gp[2],[],[],gp[5],gp[11]],x=0)
     else:
         gp=zplm()
         gp_nokcc=zplm(gkcc=0)
+        print "\nFigure 6F"
         plt.figure()
         plt.plot(gp[-1],np.subtract(gp[5],gp[3]),color='k')
         plt.plot(gp_nokcc[-1],np.subtract(gp_nokcc[5],gp_nokcc[3]),linestyle='--',color='k')
-    plt.savefig(title)
+    #plt.savefig(title)
     plt.show()
     return
-
-def f2():
-    minifig(delta_gs3(Gk=range(1,1000),Gna=[20],Gkcc=[20],Gcl=[20]),x=np.log10(70))
-    plt.savefig('f2aa.eps')
-    plt.show()
-    minifig(delta_gs3(Gna=range(1,1000),Gk=[70],Gkcc=[20],Gcl=[20]),x=np.log10(20))
-    plt.savefig('f2bb.eps')
-    plt.show()
-    minifig(delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[20]),x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12]])
-    plt.savefig('f2c.eps')
-    plt.show()
-    minifig(delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[0]),x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12]])
-    plt.savefig('f2d.eps')
-    plt.show()
