@@ -1,0 +1,3 @@
+[submodule "multi-compartment-model"]
+	path = multi-compartment-model
+	url = https://github.com/Chris-Currin/multi-compartment_multi-anion.git
