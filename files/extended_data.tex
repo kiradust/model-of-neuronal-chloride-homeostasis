@@ -1,0 +1,252 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[a4paper,total={5.5in, 9in}]{geometry}
+\usepackage[pdftex]{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{jphysiol}
+\usepackage[labelfont=bf]{caption}
+\usepackage{fancyhdr}
+\usepackage{epstopdf}
+\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 \OutputFile}
+\AppendGraphicsExtensions{.tif}
+
+\begin{document}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\newcommand{\beginsupplement}{%
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+     
+\beginsupplement
+
+\pagestyle{fancy}
+\rhead{D\"usterwald et al. 2017}
+
+\section*{Extended Methods}
+
+\subsection*{Analytical solution derivation}
+
+We wanted to find analytical solutions at steady state for the following variables in the pump-leak formulation for a single compartment including KCC2: intracellular concentrations of sodium, potassium, chloride and impermeant anions ($[Na^+]_i$; $[K^+]_i$; $[Cl^-]_i$; and $[X^z]_i$, with charge $z$); and membrane voltage ($V$). The steady state should occur in the presence of both a pump leak mechanism (sodium-potassium ATPase with pump rate modified by the sodium gradient, $J_p=p\cdot\Big(\frac{[Na^+]_i}{[Na^+]_o}\Big)^3$) and chloride-potassium extrusion (type 2 potassium-chloride co-transporter, KCC2, with conductance $g_{KCC2}$ and driving force proportional to the difference in the Nernst reversal potentials of potassium and chloride --- see \citetext{Doyon2016}). The usual passive forces acting across the membrane on each ion are also included. To allow for an analytical solution inclusive of differences in osmolarity between the intracellular and extracellular environments (\textbf{Fig. 6A-E}), we derive the analytical solution with $\Pi_i=\Pi_o+N_{H_p}$, where $\Pi_i$ is the intracellular osmolarity and $\Pi_o$ the extracellular. Thus $N_{H_p}$ is often but not always equal to 0.
+
+The situation described above ought to satisfy the following five equations at steady state, in which the conductance of an ion is denoted $g_{ion}$, an ion's Nernst reversal potential as $E_{ion}$, $F$ the Faraday constant and $A_m$ the ratio of surface area to volume. This system is similar to that given in \citetext{Keener2009}.
+
+\begin{equation} \label{na} \tag{S1}
+-\frac{d}{dt}\bigg(\frac{F}{A_m}[Na^+]_i\bigg) =g_{Na}(V-E_{Na})+3J_p
+\end{equation}
+\begin{equation} \label{k} \tag{S2}
+-\frac{d}{dt}\bigg(\frac{F}{A_m}[K^+]_i\bigg) = g_K(V-E_{K})-2J_p-g_{KCC2}(E_K-E_{Cl})
+\end{equation}
+\begin{equation} \label{cl} \tag{S3}
+\frac{d}{dt}\bigg(\frac{F}{A_m}[Cl^-]_i\bigg) = g_{Cl}(V-E_{Cl})+g_{KCC2}(E_K-E_{Cl})
+\end{equation}
+\begin{equation} \label{in} \tag{S4}
+0=[K^+]_i+[Na^+]_i-[Cl^-]_i+z[X^z]_i
+\end{equation}
+\begin{equation} \label{osmo} \tag{S5}
+\Pi_o+N_{H_p} = \Pi_i=[K^+]_i+[Na^+]_i+[Cl^-]_i+[X^z]_i
+\end{equation}
+
+We first solve the system for constant $J_p$ at steady state, i.e. equations \ref{na}, \ref{k} and \ref{cl} set to 0, and then show that a parametric solution exists for $p$ such that the function mapping $J_p$ to $p$ is bijective. Thus we begin by solving each of \eqref{na}, \eqref{k} and \eqref{cl} for the reversal potential of the intracellular ion that they refer to, and then for the intracellular ions' concentration itself. By simple rearrangement,
+
+\begin{equation} \label{nai} \tag{S6}
+[Na^+]_i = [Na^+]_o \cdot e^{-\frac{FV}{RT}} \cdot e^{-\frac{3J_pF}{RTg_{Na}}} 
+\end{equation}
+
+and
+
+\begin{equation} \label{ecl} \tag{S7}
+E_{Cl} = \frac{g_{Cl}V+g_{KCC2}E_K}{g_{Cl}+g_{KCC2}}
+\end{equation}
+
+Let $\beta$ be equal to $g_Kg_{Cl}-g_{KCC2}g_{Cl}+g_Kg_{KCC2}$. If we substitute \eqref{ecl} into \eqref{k} for $E_{Cl}$, we can solve for $E_K$ and $[K^+]_i$, hence enabling us to substitute back into \eqref{ecl} in order to solve for $[Cl^-]_i$.
+
+Thus,
+
+\begin{equation*}
+E_K = V-2J_p\frac{g_{Cl}+g_{KCC2}}{\beta}
+\end{equation*}
+
+and hence
+\begin{equation} \label{ki} \tag{S8}
+[K^+]_i = [K^+]_o \cdot e^{-\frac{FV}{RT}} \cdot e^{\frac{F}{RT} \cdot 2J_p\frac{g_{Cl}+g_{KCC2}}{\beta}}
+\end{equation}
+
+so then
+\begin{equation} \label{cli} \tag{S9}
+[Cl^-]_i = [Cl^+]_e \cdot e^{\frac{FV}{RT}} \cdot e^{-\frac{F}{RT} \cdot \frac{2J_p \cdot g_{KCC2}}{\beta}}
+\end{equation}
+
+We have now found equations for all permeant intracellular ions in terms of constants and $V$. An extension of these results means that we can find an equation for $X$ in terms of $V$ by rearranging the osmotic equilibrium equation \eqref{osmo}.
+
+\begin{equation} \label{x} \tag{S10}
+[X^z]_i=(\Pi_o +N_{H_p})-[Na^+]_i-[K^+]_i-[Cl^-]_i
+\end{equation}
+
+In order to solve for $V$, we substitute \eqref{x} into \eqref{in}, the equation that ensures intracellular charge neutrality. Thus we obtain:
+\begin{equation} \label{heh} \tag{S11}
+0=z\cdot (\Pi_o + N_{H_p}) + (1-z) \cdot ([K^+]_i+[Na^+]_i)-(1+z) \cdot [Cl^-]_i
+\end{equation}
+
+Before substituting in for the permeable intracellular ions, let us denote $\theta = e^{-\frac{FV}{RT}}$. Then with substitution of \eqref{cli}, \eqref{ki} and \eqref{nai} and multiplication through by $\theta$ equation \ref{heh} becomes:
+\begin{footnotesize}
+\begin{equation*}
+0=(1-z)\cdot \Big([K^+]_o \cdot e^{\frac{2 J_p F \cdot (g_{Cl}+ g_{KCC2})}{RT \cdot \beta}} +[Na^+]_o \cdot e^{-\frac{3J_pF}{RT\cdot g_{Na}}} \Big)\cdot \theta^2 + z\cdot (\Pi_o +N_{H_p})\cdot \theta - (1+z)\cdot [Cl^-]_o \cdot e^{\frac{-2J_pF\cdot g_{KCC2}}{RT \cdot \beta}}
+\end{equation*}
+\end{footnotesize}
+
+This quadratic equation can be solved in terms of $\theta$ using the quadratic formula.
+
+\begin{tiny}
+\begin{equation} \label{q} \tag{S12}
+\theta=\frac{-z \cdot (\Pi_o + N_{H_p} ) + \sqrt{z^2 \cdot (\Pi_o +N_{H_p})^2+4(1-z^2)\cdot [Cl^-]_o \cdot e^{-\frac{2J_pF\cdot g_{KCC2}}{ RT\cdot \beta}}\cdot\bigg([Na^+]_o \cdot e^{-\frac{3J_pF}{RT\cdot g_{Na}}}+K_e\cdot e^{\frac{2 J_p F \cdot (g_{Cl}+ g_{KCC2})}{RT \cdot \beta}}}\bigg)}{2\cdot(1-z)\cdot\bigg([Na^+]_o \cdot e^{-\frac{3J_pF}{RT\cdot g_{Na}}}+[K^+]_o\cdot e^{\frac{2 J_p F \cdot (g_{Cl}+ g_{KCC2})}{RT \cdot \beta}}\bigg)}    
+\end{equation}
+
+\end{tiny}
+
+From this one can solve the system for any constants --- at least those constants which give positive real solutions for $\theta$ --- and then use $V=-\frac{RT}{F}\ln{\theta}$ to transform the solution into the corresponding membrane voltage. This implies that initial values of the intracellular ion concentrations do not affect the final steady state (this includes shifts in $X$ that do not change the average intracellular charge $z$). Note that \eqref{q} when $z=-1$, to avoid division by 0, the solution is found by substituting $z=-1$ into \eqref{heh} and simplifying.
+
+Finally, we extend the solution from the constant pump rate assumed above to a pump rate modulated by the sodium concentration, as used in our model. The sodium-dependent pump rate updated by $J_p=p\cdot\Big(\frac{[Na^+]_i}{[Na^+]_o}\Big)^3$ cannot be solved purely analytically because one ends up attempting to find a solution for an expression unsolvable in the reals (\emph{W-Lambert Function}). In this case, one might substitute different values of $J_p$ into the solution above, and then use the function $f(J_p, [Na^+]_i)$ defined by $J_p=p\cdot\Big(\frac{[Na^+]_i}{[Na^+]_o}\Big)^3$ to solve for $p$.
+
+$f$ rearranged with $p$ as the subject of the formula resembles a parametric function. Were $p$ an independent variable determining the ionic solutions of the analytic solution, each simulation beginning with constant $p$ would have a unique steady state. To make this claim, the function mapping $J_p$ and the steady state $[Na^+]_i$ to $p$ needs to be injective (more strictly, $f: J_p\rightarrow p$ must be bijective). The reason for this constraint is that if ever a $p$ is produced by more than one $J_p$ and $[Na^+]_i$, we would have at least two possible steady states for the time series run with that pump rate constant, and thus a poor mapping between the constant pump rate solution and the cubic pump rate model.
+
+Indeed, the mapping between $p$ and $J_p$ is found to be bijective over the range of $J_p$s for which we are concerned by numeric methods. This proves that the analytic solution derived here is sufficient for finding a parametric solution for the cubic pump rate pump leak model used in our manuscript.
+
+\newpage
+
+\subsection*{Meta-analysis data and weighting}
+
+We have included here the data from studies in adult rodents of disease-mediated shifts in KCC2 expression and their effects on intracellular chloride concentration used in the KCC2 meta-analysis in Figure 3B (Table \ref{t1}) as well as a description of the scoring system used to weight results for the weighted least squares regression technique employed in the meta-analysis (Table \ref{t2}).
+
+In addition, Figure \ref{fig} summarises the numbers of reports found using the search techniques described in Materials and Methods as well as the reasons for exclusions of studies considered for the meta-analysis.
+\\
+
+\begin{table}[H]
+\small
+\begin{tabular}{p{3.7cm} p{2cm} p{1.7cm} p{1.7cm} p{1.7cm} c}
+
+\hline \noalign{\vskip 2mm} \textbf{Study} & \textbf{Region} & \textbf{$\Delta$[Cl\textsuperscript{-}]\textsubscript{i}} & \textbf{$\Delta$KCC2} & \textbf{$\Delta$NKCC1} & \textbf{Weight} \\
+
+\hline \noalign{\vskip 2mm} \citetext{Lagostena2010} & hippocampus & $\uparrow 118\%$ & $\downarrow 98\%$ & $\downarrow 16\%$ & 36 \\
+
+\hline \noalign{\vskip 2mm} \citetext{Lee2011a} & hippocampus & $\uparrow 72\%$ & $\downarrow 42\%$ & $\uparrow 7\%$ & 35 \\
+
+\hline \noalign{\vskip 2mm} \citetext{Campbell2015} & neocortex & $\uparrow 59\%$ & $\downarrow 37\%$ & $\uparrow 27\%$ & 34 \\
+
+\hline \noalign{\vskip 2mm} \citetext{Tang2015} & spinal cord & $\uparrow 56\%$ & $\downarrow 35\%$ & $\downarrow 11\%$ & 31 \\
+
+\hline \noalign{\vskip 2mm} \citetext{MacKenzie2015} A & hippocampus & $\uparrow 37\%$ & $\downarrow 17\%$ & no data & 24 \\
+
+\hline \noalign{\vskip 2mm} \citetext{MacKenzie2015} B & hippocampus & $\uparrow 2\%$ & $\downarrow 4\%$ & no data & 23 \\
+
+\hline \noalign{\vskip 2mm} \citetext{Mahadevan2015} & hippocampus & $\uparrow 20\%$ & $\downarrow 20\%$ & no data & 20 \\
+
+\hline \noalign{\vskip 2mm} \citetext{Ferrini2013} & spinal cord & $\uparrow 42\%$ & $\downarrow 45\%$ & no data & 19 \\
+
+\hline \noalign{\vskip 2mm} \citetext{Coull2003} & spinal cord & $\uparrow 151\%$ & $\downarrow 75\%$ & no data & 18 \\
+
+\hline
+	
+\end{tabular}
+\caption[Studies showing that changes in the activity of cation chloride co-transporters are associated with changes in intracellular chloride concentration in various disease states.]{Changes in the activity of cation chloride co-transporters are associated with changes in intracellular chloride concentration. For each study, the shift in the chloride gradient, change in KCC2 expression, and change in NKCC1 expression was extracted. NKCC1 was assumed to be unlikely to alter chloride homeostasis as adult tissue only was considered \cite{Ben-Ari2002}, although studies reporting non-signfificant changes in NKCC1 expression were weighted higher than those that did not test NKCC1 expression. However, when studies also reported significant expression changes in NKCC1 or functional inhibition confirming that NKCC1 was contributing towards the disease-mediated shift in chloride concentration, they were excluded.} \label{t1}
+\end{table}
+
+\pagebreak
+
+\small
+\begin{longtable}{p{7cm} p{5.5cm} c}
+
+\hline \noalign{\vskip 2mm} \textbf{Category} & & \textbf{Score} \\
+
+\hline \noalign{\vskip 2mm} \textbf{Experimental preparation} & &  \\
+
+\noalign{\vskip 2mm} Region & \textit{Cortical brain tissue} & 2 \\
+\noalign{\vskip 2mm} & \textit{Spinal cord tissue} & 1 \\
+\\
+
+\noalign{\vskip 2mm} Technique used & \textit{Acute tissue slice} & 3 \\
+\noalign{\vskip 2mm} & \textit{Organotypic tissue slice culture} & 2 \\
+\noalign{\vskip 2mm} & \textit{Dissociated cell culture} & 1 \\
+\\
+
+\hline \noalign{\vskip 2mm} \textbf{KCC2 expression data} & & \\
+\noalign{\vskip 2mm} Technique used to measure KCC2 expression & \textit{RT-PCR} & 3 \\
+\noalign{\vskip 2mm} & \textit{Immunoblotting} & 2 \\
+\noalign{\vskip 2mm} & \textit{Immunohistochemistry} & 1 \\
+\\
+
+\noalign{\vskip 2mm} Change in KCC2 expression & \textit{Stated in-text} & 2 \\
+\noalign{\vskip 2mm} & \textit{Extracted from graphic} & 1 \\
+\\
+
+\noalign{\vskip 2mm} Sample size & \textit{$\geq21$} & 4 \\
+\noalign{\vskip 2mm} & \textit{$10-20$} & 3 \\
+\noalign{\vskip 2mm} & \textit{$5-9$} & 2 \\
+\noalign{\vskip 2mm} & \textit{$\leq4$} & 1 \\
+\\
+
+\hline \noalign{\vskip 2mm} \textbf{NKCC1 expression data} & & \\
+\noalign{\vskip 2mm} Technique used to measure NKCC1 expression & \textit{RT-PCR} & 3 \\
+\noalign{\vskip 2mm} & \textit{Immunoblotting} & 2 \\
+\noalign{\vskip 2mm} & \textit{Immunohistochemistry} & 1 \\
+\\
+
+\noalign{\vskip 2mm} Change in NKCC1 expression & \textit{Stated in-text} & 10 \\
+\noalign{\vskip 2mm} & \textit{Extracted from graphic} & 8 \\
+\noalign{\vskip 2mm} & \textit{None} & 0 \\
+\\
+
+\noalign{\vskip 2mm} Sample size & \textit{$\geq21$} & 4 \\
+\noalign{\vskip 2mm} & \textit{$10-20$} & 3 \\
+\noalign{\vskip 2mm} & \textit{$5-9$} & 2 \\
+\noalign{\vskip 2mm} & \textit{$\leq4$} & 1 \\
+\\	
+
+\hline \noalign{\vskip 2mm} \textbf{$E_{GABA}$ data} & & \\
+\noalign{\vskip 2mm} Technique used to measure $E_{GABA}$ & \textit{Gramicidin perforated patch-clamp} & 4\\
+\noalign{\vskip 2mm} & \textit{Whole-cell patch-clamp} & 1 \\
+\\
+
+\noalign{\vskip 2mm} Change in $E_{GABA}$ expression & \textit{Stated in-text} & 4 \\
+\noalign{\vskip 2mm} & \textit{Extracted from graphic} & 1 \\
+\\
+
+\noalign{\vskip 2mm} Sample size & \textit{$\geq21$} & 4 \\
+\noalign{\vskip 2mm} & \textit{$10-20$} & 3 \\
+\noalign{\vskip 2mm} & \textit{$5-9$} & 2 \\
+\noalign{\vskip 2mm} & \textit{$\leq4$} & 1 \\
+\\	
+
+\caption[Scoring system used to weight studies for the least squares regression meta-analysis in Figure 3C.]{Scoring system used to weight studies for the least squares regression meta-analysis in Figure 3C.} \label{t2}
+\end{longtable}
+
+\normalsize
+
+\begin{figure}[h]
+\includegraphics{methods.tif}
+\caption{Study  numbers resulting in 8 included studies in the meta-analysis as well as reasons for the exclusion of 17 other reports.} \label{fig} 
+\end{figure}
+
+\newpage
+
+\bibliographystyle{jphysiol}
+\bibliography{ref}
+
+\end{document}

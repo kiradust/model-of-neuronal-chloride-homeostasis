@@ -17,6 +17,10 @@ a=[-0.35,-0.42,-0.37,-0.98,-0.04,-0.17,-0.75,-0.45,-0.20]
 # b - chloride change
 b=[0.56,0.72,0.59,1.18,0.02,0.37,1.51,0.42,0.20]
 
+# c - DF change (in mV)
+c=[-11.40,-12.00,-13.90,-20.90,-8.45,-7.07,-24.60,-9.00,0]
+df = False #set this to True to change y-variable to DF, or false to make it for Cl change
+
 # study names
 names=['Tang et al. 2015','Lee et al. 2011','Campbell et al. 2015','Lagostena et al. 2010',
        'MacKenzie et al. 2014','MacKenzie et al. 2014','Coull et al. 2003','Ferrini et al. 2013','Mahadevan et al. 2015']
@@ -52,9 +56,19 @@ for m in labels:
 
 print label_use, color_use
 
+ylab = "Percentage change in intracellular chloride concentration"
+
 # weighting implementation
 an = []
 bn = []
+
+if df == True:
+    b=c
+    a.pop()
+    b.pop()
+    names.pop()
+    w.pop()
+    ylab = "Change in Driving Force (mV)"
 
 for i in xrange(len(w)):
     for z in xrange(w[i]):
@@ -81,7 +95,7 @@ ax = plt.subplot(111)
 plt.scatter(a,b,s=s,c=colors)
 plt.plot(a, np.linalg.linalg.multiply(m,a)+c, color='black')
 plt.xlabel("Percentage change in KCC2 expression")
-plt.ylabel("Percentage change in intracellular chloride concentration")
+plt.ylabel(ylab)
 
 # add labels to plot
 for i, xy in enumerate(zip(a, b)):
