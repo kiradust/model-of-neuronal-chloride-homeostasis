@@ -1,5 +1,5 @@
 """
-Last modified 18 May 2017
+Last modified 26 January 2018
 
 @author: Kira
 """
@@ -18,8 +18,9 @@ a=[-0.35,-0.42,-0.37,-0.98,-0.04,-0.17,-0.75,-0.45,-0.20]
 b=[0.56,0.72,0.59,1.18,0.02,0.37,1.51,0.42,0.20]
 
 # c - DF change (in mV)
-c=[-11.40,-12.00,-13.90,-20.90,-8.45,-7.07,-24.60,-9.00,0]
-df = False #set this to True to change y-variable to DF, or false to make it for Cl change
+c=[-11.20,-12.00,-9.90,-20.90,-8.45,-7.07,-24.60,-9.00]
+v=[0.2,2,2,-0.9,-8,1,-1,0]
+df = True # set df to True to change y-variable to DF and include Vm change plot, or false to make it for Cl change only
 
 # study names
 names=['Tang et al. 2015','Lee et al. 2011','Campbell et al. 2015','Lagostena et al. 2010',
@@ -55,54 +56,51 @@ for m in labels:
         colors.append(color_use[label_use.index(m)])
 
 print label_use, color_use
+ax = plt.subplot(111)
 
 ylab = "Percentage change in intracellular chloride concentration"
 
-# weighting implementation
-an = []
-bn = []
+def regplot(x=a,y=b,an=[],bn=[]):
+    if len(y) < len(x):
+        x.pop()
+        if len(names) > len(y):
+            names.pop()
+            w.pop()
+            ylab = "Change in Driving Force (mV)"
 
-if df == True:
-    b=c
-    a.pop()
-    b.pop()
-    names.pop()
-    w.pop()
-    ylab = "Change in Driving Force (mV)"
+    for i in xrange(len(w)):
+        for z in xrange(w[i]):
+            an.append(x[i])
+            bn.append(y[i])
 
-for i in xrange(len(w)):
-    for z in xrange(w[i]):
-        an.append(a[i])
-        bn.append(b[i])
+    # linregress (linear regression analysis)
+    # Parameters:	
+    # x, y : array_like two sets of measurements. Both arrays should have the same length. If only x is given (and y=None), then it must be a two-dimensional array where one dimension has length 2. The two sets of measurements are then found by splitting the array along the length-2 dimension.
+    # Returns:	
+    # slope : float; slope of the regression line
+    # intercept : float; intercept of the regression line
+    # rvalue : float; correlation coefficient
+    # pvalue : float; two-sided p-value for a hypothesis test whose null hypothesis is that the slope is zero
+    # stderr : float; Standard error of the estimate
+    print linregress(an,bn)
 
-# linregress (linear regression analysis)
-# Parameters:	
-# x, y : array_like two sets of measurements. Both arrays should have the same length. If only x is given (and y=None), then it must be a two-dimensional array where one dimension has length 2. The two sets of measurements are then found by splitting the array along the length-2 dimension.
-# Returns:	
-# slope : float; slope of the regression line
-# intercept : float; intercept of the regression line
-# rvalue : float; correlation coefficient
-# pvalue : float; two-sided p-value for a hypothesis test whose null hypothesis is that the slope is zero
-# stderr : float; Standard error of the estimate
-print linregress(an,bn)
+    # scipy's OLS reg analysis
+    print reg_m(bn, an).summary()
 
-# p = polyfit(x,y,n) returns the coefficients for a polynomial p(x) of degree n that is a best fit (in a least-squares sense) for the data in y. The coefficients in p are in descending powers, and the length of p is n+1
-m,c = polyfit(an, bn, 1)
+    # p = polyfit(x,y,n) returns the coefficients for a polynomial p(x) of degree n that is a best fit (in a least-squares sense) for the data in y. The coefficients in p are in descending powers, and the length of p is n+1
+    m,c = polyfit(an, bn, 1)
 
-# weighting depiction in scatter plot and line-of-best-fit plot
-s = [20*(n-10) for n in w]
-ax = plt.subplot(111)
-plt.scatter(a,b,s=s,c=colors)
-plt.plot(a, np.linalg.linalg.multiply(m,a)+c, color='black')
-plt.xlabel("Percentage change in KCC2 expression")
-plt.ylabel(ylab)
+    # weighting depiction in scatter plot and line-of-best-fit plot
+    s = [20*(n-10) for n in w]
+    plt.scatter(x,y,s=s,c=colors)
+    plt.plot(x, np.linalg.linalg.multiply(m,x)+c, color='black')
 
-# add labels to plot
-for i, xy in enumerate(zip(a, b)):
-    #ax.annotate('(%s, %s)' % xy, xy=xy, textcoords='offset points')
-    ax.annotate(names[i], xy=xy, textcoords='offset points')
-    
-plt.show()
+    # add labels to plot
+    #for i, xy in enumerate(zip(x, y)):
+        #ax.annotate('(%s, %s)' % xy, xy=xy, textcoords='offset points')
+        #ax.annotate(names[i], xy=xy, textcoords='offset points')
+
+    return an,bn
 
 # run scipy's OLS (ordinary least squares) regression analysis
 def reg_m(y, x):
@@ -110,5 +108,3 @@ def reg_m(y, x):
     X = sm.add_constant(np.column_stack((x, ones)))
     results = sm.OLS(y, X).fit()
     return results
-    
-print reg_m(bn, an).summary()
