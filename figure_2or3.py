@@ -179,7 +179,7 @@ def f3b():
     dg=delta_gs3(Gkcc=range(1,1000),Gna=[20],Gk=[70],Gcl=[20])
     print "\nFigure 3B"
     minithreefig([dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k',x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12],[0,24]])
-    minithreefig([10**dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k',x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12],[0,24]])
+    #minithreefig([10**dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k',x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12],[0,24]])
     #plt.savefig('f3b.eps')
     plt.show()
     return dg[0],dg[4], dg[1], dg[5]
