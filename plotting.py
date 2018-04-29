@@ -85,3 +85,42 @@ def minithreefig(delta,colour,x=0,yl=[[-100,-70],[1.0e-13,1.6e-13],[-0.95,-0.8]]
         ax2.axvline(x=x,linestyle='--',color='0.8')
     ax2.set_ylim(yl[2])
     return ax0, ax1, ax2
+
+
+def fluxplot(timevalues):
+    plt.figure()
+    gs = gridspec.GridSpec(5,1,height_ratios=[1, 1, 1, 0.5, 0.5])
+    
+    ax0=plt.subplot(gs[0])
+    ax0.plot(timevalues[11],timevalues[28],color=nacolor)
+    ax0.plot(timevalues[11],timevalues[29],color=kcolor)
+    ax0.plot(timevalues[11],timevalues[30],color=clcolor)
+    ax0.plot(timevalues[11],timevalues[32],color=xcolor)
+    ax0.set_ylabel("ion fluxes")
+    
+    ax1=plt.subplot(gs[1])
+    ax1.plot(timevalues[11],timevalues[18],color=nacolor)
+    ax1.plot(timevalues[11],timevalues[19],color=kcolor)
+    ax1.plot(timevalues[11],timevalues[17],color=clcolor)
+    ax1.plot(timevalues[11],timevalues[20],color=xcolor)
+    ax1.set_ylabel("concentrations")
+    
+    ax2=plt.subplot(gs[2])
+    ax2.plot(timevalues[11],timevalues[12],color=nacolor)
+    ax2.plot(timevalues[11],timevalues[13],color=kcolor)
+    ax2.plot(timevalues[11],timevalues[14],color=clcolor)
+    ax2.plot(timevalues[11],timevalues[15],color=xcolor)
+    ax2.plot(timevalues[11],timevalues[16],color='k')
+    ax2.set_ylabel("potentials")
+    
+    # ws on own
+    ax3=plt.subplot(gs[3])
+    ax3.plot(timevalues[11],timevalues[31],color=wcolor)
+    ax3.set_ylabel("volume flux")
+    
+    ax4=plt.subplot(gs[4])
+    ax4.plot(timevalues[11],timevalues[10],color=wcolor)
+    ax4.set_ylabel("volume")
+    ax4.set_xlabel("time in seconds")
+    plt.show()
+    return

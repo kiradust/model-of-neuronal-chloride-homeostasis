@@ -29,7 +29,7 @@ def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):
     #plt.savefig('f4a.eps')
     plt.show()
     
-    return endcl[20]
+    return endcl[20], endcl
     
 def f4b(init_x=range(25,586,40),new=0,l='-',title='f4b.eps',a=0,b=0):
     endv=[]
@@ -71,6 +71,8 @@ def f4b(init_x=range(25,586,40),new=0,l='-',title='f4b.eps',a=0,b=0):
     
 def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps'): #doubles as f6c when new!=0
     dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,graph=0)
+    delta=[]
+    delta1=[]
     
     if new==0:
         print "\nFigure 4C"
@@ -90,17 +92,17 @@ def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps'): #doub
         ax1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='--') #nai
         ax2.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='--') #volume
         
-        delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=5,graph=0)
-        ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='-.')
-        ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='-.')
-        ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='-.')
-        ax1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='-.') #nai
-        ax2.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='-.') #volume
-        print (delta[16][-1]-delta[14][-1])
-        print len(delta[16])
+        delta1=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=5,graph=0)
+        ax0.plot(delta1[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='-.')
+        ax0.plot(delta1[11][1:-1],delta[13][1:-1],color=kcolor,ls='-.')
+        ax0.plot(delta1[11][1:-1],delta[16][1:-1],'k',ls='-.')
+        ax1.plot(delta1[11][1:-1],delta[18][1:-1],color=nacolor,ls='-.') #nai
+        ax2.plot(delta1[11][1:-1],delta[10][1:-1],color='k',ls='-.') #volume
+        print (delta1[16][-1]-delta1[14][-1])
+        print len(delta1[16])
     #plt.savefig(title)
     plt.show()
-    return
+    return dex,delta,delta1
     
 def f4d(f=2e-3,new=0,title='f4d.eps'):
     print "\nFigure 4D"
@@ -118,9 +120,9 @@ def f4d(f=2e-3,new=0,title='f4d.eps'):
         a0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
         a1.plot(delta[11][1:-1],delta[10][1:-1],color=wcolor,ls='--') #volume
         a2.plot(delta[11][1:-1],delta[23][1:-1],color=xcolor,ls='--') #conc X
-    #plt.savefig(title)
+    plt.savefig(title)
     plt.show()
-    return
+    return dxe
 
 def f4e(Z=range(-120,-50),moldelt=1e-12): # extra function needed in figure 5
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=moldelt)

@@ -17,6 +17,7 @@ sym=['-k',':k','--k','-.k']
 
 def f5a(new=0,title='f5a.eps',dz=2.5e-7,tt=1800): #doubles as f6a when new==1
     dez=plm(dz=dz,two=1,xt=360,tt=tt,ztarget=-1)
+    delta=[]
     if new==0:
         print "Figure 5A"
         a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,2.4e-12],[-1.1,-0.8]])
@@ -34,7 +35,7 @@ def f5a(new=0,title='f5a.eps',dz=2.5e-7,tt=1800): #doubles as f6a when new==1
         print (delta[16][-1]-delta[14][-1])
     #plt.savefig(title)
     plt.show()
-    return
+    return dez, delta
 
 def f5b(moldelt=0):
     print "\nFigure 5B"
@@ -144,7 +145,7 @@ def f5c(ttt=3000,ratio=0.8,md=1e-12,new=0,title='f5c.eps'):
         print (delta[16][-1]-delta[14][-1])
     #plt.savefig(title)
     plt.show()
-    return
+    return dez
 
 def f5d():
     print "\nFigure 5D"

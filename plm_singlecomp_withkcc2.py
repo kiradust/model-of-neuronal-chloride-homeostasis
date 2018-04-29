@@ -92,6 +92,11 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     z_delt=[]
     xe_delt=[]
     gkcc_delt=[]
+    kflux=[]
+    naflux=[]
+    clflux=[]
+    Xflux=[]
+    wflux=[]
     
     dt=1e-3 # zero time, dt time step
     ts=tt/n # plotting timestep 
@@ -119,6 +124,12 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     #x=(cl-na-k)/z
     k=k_init
     cle=clo
+    
+    dw=0
+    dk=0
+    dcl=0
+    dna=0
+    dx=0
         
     if osmofix==True:
         if xinit==0:
@@ -172,6 +183,11 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             z_delt.append(z)
             xe_delt.append(xe)
             gkcc_delt.append(pkcc)
+            wflux.append(dw)
+            Xflux.append(dx)
+            clflux.append(dcl)
+            naflux.append(dna)
+            kflux.append(dk)
             ctr+=1
         
         # various conditional states
@@ -188,7 +204,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         if f4d!=0:
             if xt+400>t>xt:
                 xe+=f4d*6e-5
-                cle-=f4d*6e-5*1 # Figure 4D (balance the charge differences) --> can adjust the ratio at * for interest
+                cle-=f4d*6e-5 # Figure 4D (balance the charge differences) --> can adjust the ratio at * for interest
         
         jp=p*(na/nao)**3 # cubic pump rate update (dependent on sodium gradient)
         
@@ -248,7 +264,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         x=xm+xtemp
         osi=na+k+cl+x # intracellular osmolarity 
         ose=nae+ke+cle+xe+xe1*0.8
-        w2=w+dt*(vw*pw*sa*(osi-ose))
+        dw=dt*(vw*pw*sa*(osi-ose))
+        w2=w+dw
         
         # other volume updates (incorporating hydrostatic pressure - various options considered) 
         if neww==1:
@@ -312,7 +329,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1
     print 'w', w, 'radius', rad, 'z', z
     print 'ecl', Cl[-1]
-    return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K2, X2, w, z_delt, xe_delt, gkcc_delt, a0, a1, a2, np.log10(jp*F), osi, ose
+    return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K2, X2, w, z_delt, xe_delt, gkcc_delt, a0, a1, a2, naflux, kflux, clflux, wflux, Xflux, np.log10(jp*F), osi, ose
 
 def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     nai=[]

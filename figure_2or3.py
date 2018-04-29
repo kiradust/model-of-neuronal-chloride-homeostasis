@@ -5,7 +5,7 @@ Created on Tue Sep 27 12:11:36 2016
 @author: Kira
 @title: Figure 2/3
 """
-from plm_singlecomp_withkcc2 import plm, zplm, z, ose, default_P, F, nae, ke, cle, xe, R, default_p, P
+from plm_singlecomp_withkcc2 import plm, zplm, z, ose, default_P, F, nae, ke, cle, xe, R, default_p, P, gna, gk, gcl, beta, xe1, gkcc
 from plotting import minifig, minithreefig, twoaxes,wcolor, kcolor, clcolor, xcolor
 import matplotlib.pyplot as plt
 import numpy as np
@@ -165,7 +165,7 @@ def f2():
 def f3a():
     dg=plm(tk=120,tt=600)
     print "Figure 3A"
-    minithreefig([dg[11][4:-1],dg[14][4:-1],dg[13][4:-1],dg[16][4:-1],dg[10][4:-1],dg[24][4:-1]],'k',yl=[[-100,-70],[1.92e-12,1.98e-12],[0,6e-7]])
+    a1,a2,a3=minithreefig([dg[11][4:-1],dg[14][4:-1],dg[13][4:-1],dg[16][4:-1],dg[10][4:-1],dg[24][4:-1]],'k',yl=[[-100,-70],[1.92e-12,1.98e-12],[0,6e-7]])
     #plt.savefig('f3a.eps')
     plt.show()
     print dg[24][-1]
@@ -173,7 +173,7 @@ def f3a():
     print dg[17][0]
     print dg[17][-1]
     print dg[14][-1]
-    return
+    return dg
     
 def f3b():
     dg=delta_gs3(Gkcc=range(1,1000),Gna=[20],Gk=[70],Gcl=[20])
@@ -198,5 +198,22 @@ def f3d(new=0,title='f3d.eps'): #doubles as f6f when new==1
         plt.plot(gp[-1],np.subtract(gp[5],gp[3]),color='k')
         plt.plot(gp_nokcc[-1],np.subtract(gp_nokcc[5],gp_nokcc[3]),linestyle='--',color='k')
     #plt.savefig(title)
+    plt.show()
+    return
+
+def k_vm(): #supplementary figure *note: pump rate not corrected
+    vm=[]
+    for i in range(1,500):
+        i=i*1e-4
+        xe1=-1*(cle-nae-ke)
+        xe=xe1*0.2
+        ose = xe1+cle+nae+i
+        q=np.float64(10**(default_P/10000.0)/(F*R))
+        theta=(-z*ose+np.sqrt(z**2*ose**2+4*(1-z**2)*cle*np.exp(-2*q*gkcc*beta)*(nae*np.exp(-3*q/gna)+i*np.exp(2*q*(gcl+gkcc)*beta))))/(2*(1-z)*((nae*np.exp(-3*q/gna)+i*np.exp(2*q*(gcl+gkcc)*beta))))    
+        vm.append((-np.log(theta))*R*1000.0)
+        
+    plt.plot(np.log10(range(1,500))-1,vm,color=kcolor)
+    plt.xlabel("log (extracellular potassium concentration) in mM")
+    plt.ylabel("membrane potential (mV)")
     plt.show()
     return
