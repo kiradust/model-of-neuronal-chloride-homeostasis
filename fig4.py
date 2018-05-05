@@ -69,8 +69,8 @@ def f4b(init_x=range(25,586,40),new=0,l='-',title='f4b.eps',a=0,b=0):
     
     return a,b
     
-def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps'): #doubles as f6c when new!=0
-    dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,graph=0)
+def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps',ham=0): #doubles as f6c when new!=0
+    dex=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,graph=0,hamada=ham)
     delta=[]
     delta1=[]
     
@@ -82,7 +82,7 @@ def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps'): #doub
         print "\nFigure 6C"
         ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[18][1:-1],dex[10][1:-1]],'k',yl=[[-100,-70],[13,19],[1.8e-12,10e-12]])
 
-        delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=3,graph=0)
+        delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=3,graph=0,hamada=ham)
         ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
         ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
         ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
@@ -92,7 +92,7 @@ def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps'): #doub
         ax1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='--') #nai
         ax2.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='--') #volume
         
-        delta1=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=5,graph=0)
+        delta1=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=5,graph=0,hamada=ham)
         ax0.plot(delta1[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='-.')
         ax0.plot(delta1[11][1:-1],delta[13][1:-1],color=kcolor,ls='-.')
         ax0.plot(delta1[11][1:-1],delta[16][1:-1],'k',ls='-.')
@@ -100,7 +100,7 @@ def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps'): #doub
         ax2.plot(delta1[11][1:-1],delta[10][1:-1],color='k',ls='-.') #volume
         print (delta1[16][-1]-delta1[14][-1])
         print len(delta1[16])
-    #plt.savefig(title)
+    plt.savefig(title)
     plt.show()
     return dex,delta,delta1
     

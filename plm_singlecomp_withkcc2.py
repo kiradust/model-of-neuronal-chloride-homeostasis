@@ -75,8 +75,11 @@ km2=2.5*10**(1)
 density=1.0 # kg/dm3 = g/ml --> assume close to 1 (density of water)
 hp=1e-3
 hydrop=0
+qpump=6.13*1e-5 #picoamperes
+kd=15*1e-3 #M Kd (Raimondo 2012)
+vmax=5*1e-3 #M/s Vmax (Raimondo 2012)
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax):
     # create plotting arrays
     Vm=[]
     K=[]
@@ -192,7 +195,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         
         # various conditional states
         if tk+360>t>tk:
-            pkcc += 1e-12    # control switch for gkkc ramp (Fig 3)
+            pkcc+=1e-12    # control switch for gkkc ramp (Fig 3)
+            vmax+=3.3e-7
         
         if dz!=0 and xt<t<xt+420 and xtemp>0 and xm>0:
             xtemp+=dz
@@ -208,6 +212,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         
         jp=p*(na/nao)**3 # cubic pump rate update (dependent on sodium gradient)
         
+        if hamada!=0:
+            jp=qpump*hamada*(1.62/(1+(0.0067/na)**3)+1.0/(1+(0.0676/na)**3))/F
+        
         if neww==4 or neww==5:
             jp=jeffconstant # Figure 6
             
@@ -221,8 +228,16 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                 p=(10**(pd))/F # ATPase ramp
 
         # kcc2
-        #jkcc2=50.0*pkcc*(ke*cle-k*cl) #Fraser and Huang
-        jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
+        if kccmodel==1: 
+            externals=cle*ke/k
+            fix=np.log(externals/0.056)
+            jkcc2=-0.117*np.log(externals/cl)/fix*vmax*cl/(kd+cl)/F #Raimondo
+        elif kccmodel==2:
+            jkcc2=51.55*pkcc*(ke*cle-k*cl) #Fraser and Huang
+        elif kccmodel==3:
+            jkcc2=0.011125*0.3*(ke*cle-k*cl)/(0.000054*((1+ke*cle/0.000054)*(1+ke/0.009)*(1+cle/0.006)+(1+k*cl/0.000054)*(1+k/0.009)*(1+cl/0.006)))/F
+        else:
+            jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
 
         # ionic flux equations
         dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw) 

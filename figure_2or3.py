@@ -13,7 +13,7 @@ from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
 prange=range(-60000,-33000)
 
-# delta_gs keeps the effective pump rate constant, while delta_gs3 uses a constant p and P_eff dependent on the final sodium concentration (checks back to find corresponding values)
+# delta_gs keeps the effective pump rate constant, while delta_gs3 uses a constant p and P_eff is dependent on the final sodium concentration (checks back to find corresponding values)
 
 def delta_gs(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
     vm=[]
