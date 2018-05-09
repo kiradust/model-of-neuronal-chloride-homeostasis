@@ -215,5 +215,6 @@ def k_vm(): #supplementary figure *note: pump rate not corrected
     plt.plot(np.log10(range(1,500))-1,vm,color=kcolor)
     plt.xlabel("log (extracellular potassium concentration) in mM")
     plt.ylabel("membrane potential (mV)")
+    plt.savefig('k_vm.eps')
     plt.show()
     return

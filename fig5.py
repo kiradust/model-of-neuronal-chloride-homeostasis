@@ -18,14 +18,14 @@ sym=['-k',':k','--k','-.k']
 def f5a(new=0,title='f5a.eps',dz=2.5e-7,tt=1800,ham=0): #doubles as f6a when new==1
     dez=plm(dz=dz,two=1,xt=360,tt=tt,ztarget=-1)
     delta=[]
-    if new==0:
+    if new==0 and ham==0:
         print "Figure 5A"
         a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[10][1:-1],dez[22][1:-1]],xcolor,yl=[[-100,-70],[1.8e-12,2.4e-12],[-1.1,-0.8]])
     else:
         print "Figure 6A"
         a0,a1,a2=minithreefig([dez[11][1:-1],dez[14][1:-1],dez[13][1:-1],dez[16][1:-1],dez[18][1:-1],dez[22][1:-1]],xcolor,yl=[[-100,-70],[13,19],[-1.1,-0.8]])
-    print (dez[16][-1]-dez[14][-1])
-    if new==1 or ham!=0:
+        print (dez[16][-1]-dez[14][-1])
+        
         delta=plm(dz=dz,two=1,xt=360,tt=tt,ztarget=-1,neww=4*new,hamada=ham)
         a0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
         a0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
@@ -33,6 +33,15 @@ def f5a(new=0,title='f5a.eps',dz=2.5e-7,tt=1800,ham=0): #doubles as f6a when new
         a1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='--') #nai
         a2.plot(delta[11][1:-1],delta[22][1:-1],color=xcolor,ls='--')
         print (delta[16][-1]-delta[14][-1])
+        
+        if ham==1:
+            delta=plm(dz=dz,two=1,xt=360,tt=tt,ztarget=-1,neww=4,hamada=ham)
+            a0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='-.')
+            a0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='-.')
+            a0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='-.')
+            a1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='-.') #nai
+            a2.plot(delta[11][1:-1],delta[22][1:-1],color=xcolor,ls='-.')
+            print (delta[16][-1]-delta[14][-1])
     plt.savefig(title)
     plt.show()
     return dez, delta

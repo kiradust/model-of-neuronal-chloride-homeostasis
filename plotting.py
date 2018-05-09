@@ -87,7 +87,7 @@ def minithreefig(delta,colour,x=0,yl=[[-100,-70],[1.0e-13,1.6e-13],[-0.95,-0.8]]
     return ax0, ax1, ax2
 
 
-def fluxplot(timevalues):
+def fluxplot(timevalues,title=''):
     plt.figure()
     gs = gridspec.GridSpec(5,1,height_ratios=[1, 1, 1, 0.5, 0.5])
     
@@ -122,5 +122,7 @@ def fluxplot(timevalues):
     ax4.plot(timevalues[11],timevalues[10],color=wcolor)
     ax4.set_ylabel("volume")
     ax4.set_xlabel("time in seconds")
+    if title !='':
+        plt.savefig(title)
     plt.show()
     return
