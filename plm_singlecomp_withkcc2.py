@@ -256,24 +256,34 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                     tt=t+180
                 else:
                     xtemp+=xflux
+                    dx=xflux
                     tt=t+1000
             else:
                 if (min(z,zx)<=ztarget<=max(z,zx)):
                     print 'anions stopped diffusing at '+str(t)
                     xend=1
+                    dx=0
                 else:
                     if xflux!=0 and tt<1000 and xtemp>0 and (min(zxm,zx)<=ztarget<=max(zxm,zx)):
                         xtemp-=xflux
                         tt=t+50
+                        dx=-xflux
                     else:
                         print 'anions stopped diffusing at '+str(t)
                         xend=1
+                        dx=0
                 
         if xt+xend>t>xt:
             if xflux!=0:
                 xtemp+=xflux/10
+                dx=xflux/10
             else:
                 xtemp+=dx/10 
+                dx=dx/10
+        elif xend!=0:
+            dx=0
+        elif t<xt:
+            dx=0
             
         # update volume (usual method)
         x=xm+xtemp
