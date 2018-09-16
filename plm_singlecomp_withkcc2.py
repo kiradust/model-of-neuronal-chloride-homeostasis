@@ -207,8 +207,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         
         if f4d!=0:
             if xt+400>t>xt:
-                xe+=f4d*2e-5
-                #cle-=f4d*6e-5 # Figure 4D (balance the charge differences) --> can adjust the ratio at * for interest
+                xe+=f4d*6e-5
+                cle-=f4d*6e-5 # Figure 4D (balance the charge differences) --> can adjust the ratio at * for interest
         
         jp=p*(na/nao)**3 # cubic pump rate update (dependent on sodium gradient)
         
