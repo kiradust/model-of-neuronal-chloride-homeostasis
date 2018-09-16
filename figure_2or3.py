@@ -68,7 +68,7 @@ def delta_gs(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
         
     print ecl[-1], ek[-1], ev[-1]
     
-    return np.log10(chosen),ecl,ek,ena,df,ev,w
+    return np.log10(chosen),ecl,ek,ena,df,ev,w,kpflux,kaflux
 
 def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
     vm=[]
@@ -84,6 +84,10 @@ def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
     ena=[]
     df=[]
     chosen=[]
+    kpflux = []
+    kaflux = []
+    kaflux1 = []
+    kaflux2 = []
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
     
     # only operate on conductance which is changing
@@ -135,30 +139,36 @@ def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
                 ev.append(1000.0*v)
                 df.append(ev[-1]-ecl[-1])
                 found=True
+                kpflux.append(gk*(v-ek[-1]/1000.0))
+                kaflux.append(-(2*q*R+gkcc*(ek[-1]-ecl[-1])/1000.0))
+                kaflux1.append(-(2*q*R))
+                kaflux2.append(-(gkcc*(ek[-1]-ecl[-1])/1000.0))
         
         # if when checking for correct pair (l, na) none is found, notify (this will mean that no figure is generated)
         if found==False:
             print 'no match',i,pi,default_p
             # may be fixed by increasing bounds of prange (i.e. larger search space)
 
-    return np.log10(chosen),ecl,ek,ena,df,ev,w
+    return np.log10(chosen),ecl,ek,ena,ki,ev,w,kpflux,kaflux,kaflux1,kaflux2
     
 def f2():
     print "Figure 2A"
-    minifig(delta_gs3(Gk=range(1,1000),Gna=[20],Gkcc=[20],Gcl=[20]),x=np.log10(70))
-    #plt.savefig('f2a.eps')
+    dga = delta_gs3(Gk=range(1,1000),Gna=[20],Gkcc=[20],Gcl=[20])
+    minifig(dga,x=np.log10(70),yl=[[-100,80],[1.9e-12,2.05e-12]])
     plt.show()
     print "\nFigure 2B"
-    minifig(delta_gs3(Gna=range(1,1000),Gk=[70],Gkcc=[20],Gcl=[20]),x=np.log10(20))
-    #plt.savefig('f2b.eps')
+    dga = delta_gs3(Gna=range(1,1000),Gk=[70],Gkcc=[20],Gcl=[20])
+    minifig(dga,x=np.log10(20),yl=[[-100,100],[1.9e-12,2.05e-12]])
     plt.show()
     print "\nFigure 2C"
-    minifig(delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[20]),x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12]])
-    #plt.savefig('f2c.eps')
+    #minifig(delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[20]),x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12]])
+    dga = delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[20])
+    minifig(dga,x=np.log10(20),yl=[[-100,80],[1.9e-12,2.05e-12]])
     plt.show()
     print "\nFigure 2D"
-    minifig(delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[0]),x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12]])
-    #plt.savefig('f2d.eps')
+    #minifig(delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[0]),x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12]])
+    dga = delta_gs3(Gcl=range(1,1000),Gk=[70],Gna=[20],Gkcc=[0])
+    minifig(dga,x=np.log10(20),yl=[[-100,80],[1.9e-12,2.05e-12]])
     plt.show()
     return
     

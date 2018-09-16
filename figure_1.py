@@ -39,7 +39,7 @@ def f1c(new=0,l='-',g1=0,g2=0,g3=0):
     offpump=plm(graph=g,ton=3000,toff=9000,tt=12000,title='f1c.eps',neww=new,ls=l,a0=g1,a1=g2,a2=g3)
     return offpump
     
-def f1d(time=25000,ham=0):
+def f1d(time=25000,ham=0,l=0):
     T=[-7000,-6000,-5000,-4500,-4000,-3500,-3000,-2000,-1000,0,1000,2000]
     #T=[-2000,0,1000,2000]
     ti=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
@@ -50,11 +50,11 @@ def f1d(time=25000,ham=0):
             q=10**(k/1000.0)/F
             # optimisations (alternative is to start sims at any values and allow each to run for a long time)
             if k==-7000:
-                a=plm(p=q,tt=time,graph=0,k_init=0,xinit=30e-3,clinit=120e-3,na_init=140e-3,f1d=True)
+                a=plm(p=q,tt=time,graph=0,k_init=0,xinit=30e-3,clinit=120e-3,na_init=140e-3,f1d=True,lin=l)
             elif k==-6000: 
-                a=plm(p=q,tt=time,graph=0,k_init=0,xinit=36e-3,clinit=113e-3,na_init=140e-3,f1d=True)
+                a=plm(p=q,tt=time,graph=0,k_init=0,xinit=36e-3,clinit=113e-3,na_init=140e-3,f1d=True,lin=l)
             else:
-                a=plm(p=q,tt=time,graph=0,k_init=0,xinit=75e-3,clinit=75e-3,na_init=135e-3,f1d=True)
+                a=plm(p=q,tt=time,graph=0,k_init=0,xinit=75e-3,clinit=75e-3,na_init=135e-3,f1d=True,lin=l)
             for i in range(25):
                 ti[i].append(a[i])
     

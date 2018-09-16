@@ -79,7 +79,7 @@ qpump=6.13*1e-5 #picoamperes
 kd=15*1e-3 #M Kd (Raimondo 2012)
 vmax=5*1e-3 #M/s Vmax (Raimondo 2012)
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0):
     # create plotting arrays
     Vm=[]
     K=[]
@@ -207,13 +207,16 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         
         if f4d!=0:
             if xt+400>t>xt:
-                xe+=f4d*6e-5
-                cle-=f4d*6e-5 # Figure 4D (balance the charge differences) --> can adjust the ratio at * for interest
+                xe+=f4d*2e-5
+                #cle-=f4d*6e-5 # Figure 4D (balance the charge differences) --> can adjust the ratio at * for interest
         
         jp=p*(na/nao)**3 # cubic pump rate update (dependent on sodium gradient)
         
         if hamada!=0:
             jp=qpump*hamada*(1.62/(1+(0.0067/na)**3)+1.0/(1+(0.0676/na)**3))/F
+        
+        if lin!=0:
+            jp=p*(na/nao)
         
         if neww==4 or neww==5:
             jp=jeffconstant # Figure 6
@@ -336,7 +339,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         a1.plot(time,K,color=kcolor)
         a2=plt.subplot(gs[2])
         a2.plot(time,W,color=wcolor,label='relative volume')
-        #plt.savefig(title)
+        #plt.savefig('kcl_concs.eps')
         plt.show()
         
     if graph==2:
@@ -401,8 +404,6 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     plt.figure()
     plt.plot(pi,ecl,color=clcolor)
     plt.plot(pi,ek,color=kcolor)
-    #plt.plot(pi,ena,color=nacolor)
-    #plt.plot(pi,xi,color=xcolor)
     plt.plot(pi,ev,'k--')
     plt.ylabel('mV')
     plt.xlabel('pump rate')

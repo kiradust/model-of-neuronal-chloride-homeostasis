@@ -40,6 +40,7 @@ def minifig(delta,x=0, yl=[[-100,40],[1.75e-12,2.75e-12]]):
     ax0.plot(delta[0],delta[1],color=clcolor)
     ax0.plot(delta[0],delta[2],color=kcolor)
     ax0.plot(delta[0],delta[5],'k')
+    #ax0.plot(delta[0],delta[3],color=nacolor)
     ax0.set_ylim(yl[0])
     if x!=0:
         ax0.axvline(x=x,linestyle='--',color='0.8')
