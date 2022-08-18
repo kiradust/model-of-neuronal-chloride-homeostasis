@@ -6,3 +6,5 @@ If you would like a demonstration of the first section of figures in the paper (
 ## Multi-compartment model (multi-compartment-model submodule)
 ### Figures 7 and 8 of the paper "Biophysical models reveal the relative importance of transporter proteins and impermeant anions in chloride homeostasis" by Düsterwald, Currin, Burman, Akerman,  Kay and Raimondo
 If you would like a demonstration of the latter section of figures in the paper and demonstrations of neuronal chloride homeostatic mechanisms across multiple compartments (incorporating electrodiffusion), see the notebook "runme_figures_7_and_8" in the submodule "multi-compartment-model" (https://github.com/Chris-Currin/multi-compartment_multi-anion), which can be navigated to directly from this repo.
+
+## Phosphate branch -- adding electrogenic phosphate transporter

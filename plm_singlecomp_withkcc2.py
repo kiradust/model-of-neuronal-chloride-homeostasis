@@ -79,7 +79,10 @@ qpump=6.13*1e-5 #picoamperes
 kd=15*1e-3 #M Kd (Raimondo 2012)
 vmax=5*1e-3 #M/s Vmax (Raimondo 2012)
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=100000,ratio=0.98,xend=120,osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0):
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,
+xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=100000,ratio=0.98,xend=120,
+osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,
+title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0,ecp=0,xp=0,tpend=0):
     # create plotting arrays
     Vm=[]
     K=[]
@@ -127,6 +130,8 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
     #x=(cl-na-k)/z
     k=k_init
     cle=clo
+
+    jphos=0
     
     dw=0
     dk=0
@@ -140,14 +145,14 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             xinit=x
         else:
             cl=(os_init+(z-1)*x)/2.0
-            print cl
+            print(cl)
     
     if k_init==0:
         k=cl-z*x-na
         
-    print "k_init: "+str(k)
-    print "osi: "+str(k+cl+x+na)
-    print "z_aim: "+str(ztarget) +" with zflux of "+str(Zx)
+    print("k_init: "+str(k))
+    print("osi: "+str(k+cl+x+na))
+    print("z_aim: "+str(ztarget) +" with zflux of "+str(Zx))
     
     xm=x*ratio
     xtemp=x*(1-ratio)
@@ -242,14 +247,19 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         else:
             jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
 
+        if tpend>t>xp:
+            jphos = ecp*(V-R*np.log(nae/na))
+            z=(z*x+3*dx)/(x+dx)
+
         # ionic flux equations
-        dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw) 
+        dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw-3*jphos) 
         dk=-dt*Ar*(gk*(V-R*np.log(ke/k))-ck*jp*sw-jkcc2)
         dcl=dt*Ar*(gcl*(V+R*np.log(cle/cl))+jkcc2) #dna,dk,dcl: increase in intracellular ion conc during time step dt
-        dx=-dt*Ar*zx*(gx*(V-R/zx*np.log(xe/(xtemp))))
+        dx=-dt*Ar*(zx*gx*(V-R/zx*np.log(xe/(xtemp)))-jphos)
         na+=dna
         k+=dk
         cl+=dcl # increment concentrations
+        x+=dx
         
         # anion flux switches
         if xend==0 and (t>xt):
@@ -263,7 +273,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                     tt=t+1000
             else:
                 if (min(z,zx)<=ztarget<=max(z,zx)):
-                    print 'anions stopped diffusing at '+str(t)
+                    print('anions stopped diffusing at '+str(t))
                     xend=1
                     dx=0
                 else:
@@ -272,7 +282,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                         tt=t+50
                         dx=-xflux
                     else:
-                        print 'anions stopped diffusing at '+str(t)
+                        print('anions stopped diffusing at '+str(t))
                         xend=1
                         dx=0
                 
@@ -354,9 +364,9 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         #plt.savefig(title)
         plt.show()
     
-    print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1
-    print 'w', w, 'radius', rad, 'z', z
-    print 'ecl', Cl[-1]
+    print('na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
+    print('w', w, 'radius', rad, 'z', z)
+    print('ecl', Cl[-1])
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K2, X2, w, z_delt, xe_delt, gkcc_delt, a0, a1, a2, naflux, kflux, clflux, wflux, Xflux, np.log10(jp*F), osi, ose
 
 def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):

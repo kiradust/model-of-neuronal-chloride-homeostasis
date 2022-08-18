@@ -17,7 +17,7 @@ rcParams['figure.figsize'] = 8,8
 sym=['-',':','--','-.']
 
 def f4a(init_x=[40e-3,80e-3,120e-3,160e-3]):
-    print "Figure 4A"
+    print("Figure 4A")
     
     plt.figure()
     for i in range(len(init_x)):
@@ -37,16 +37,16 @@ def f4b(init_x=range(25,586,40),new=0,l='-',title='f4b.eps',a=0,b=0):
     endcl=[]
     endw =[]
     
-    print "\nFigure 4B"
+    print("\nFigure 4B")
     for i in init_x:
         end=plm(xinit=i*1e-3,k_init=0,tt=2000,osmofix=False,neww=new,ls=l)
         endv.append(end[9])
         endk.append(end[6])
         endcl.append(end[7])
         endw.append(end[21])
-        print end[9]
-        print end[6]
-        print end[7]
+        print(end[9])
+        print(end[6])
+        print(end[7])
     
     plt.figure()
     gs = gridspec.GridSpec(2, 1, height_ratios=[1.5, 1]) 
@@ -75,20 +75,20 @@ def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps',ham=0):
     delta1=[]
     
     if new==0:
-        print "\nFigure 4C"
+        print("\nFigure 4C")
         ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor,yl=[[-100,-70],[1.9e-12,2.5e-12],[154,157]])
     
     else:
-        print "\nFigure 6C"
+        print("\nFigure 6C")
         ax0,ax1,ax2=minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[18][1:-1],dex[10][1:-1]],'k',yl=[[-100,-70],[13,19],[1.8e-12,2.2e-12]])
 
         delta=plm(gx=gX,xt=xt,tt=tt,xflux=xflux,xend=xend,neww=3,graph=0,hamada=ham)
         ax0.plot(delta[11][1:-1],delta[14][1:-1],color=clcolor,linestyle='--')
         ax0.plot(delta[11][1:-1],delta[13][1:-1],color=kcolor,ls='--')
         ax0.plot(delta[11][1:-1],delta[16][1:-1],'k',ls='--')
-        print (delta[16][-1]-delta[14][-1])
-        print (delta[16][350]-delta[14][350])
-        print len(delta[16])
+        print(delta[16][-1]-delta[14][-1])
+        print(delta[16][350]-delta[14][350])
+        print(len(delta[16]))
         ax1.plot(delta[11][1:-1],delta[18][1:-1],color=nacolor,ls='--') #nai
         ax2.plot(delta[11][1:-1],delta[10][1:-1],color='k',ls='--') #volume
         
@@ -100,21 +100,21 @@ def f4c(gX=1e-8,tt=3600,xt=360,xend=420,xflux=4e-7,new=0,title='f4c.eps',ham=0):
             ax0.plot(delta2[11][1:-1],delta2[16][1:-1],'k',ls=':')
             ax1.plot(delta2[11][1:-1],delta2[18][1:-1],color=nacolor,ls=':') #nai
             ax2.plot(delta2[11][1:-1],delta2[10][1:-1],color='k',ls=':') #volume
-            print (delta2[16][-1]-delta2[14][-1])
-            print len(delta2[16])
+            print(delta2[16][-1]-delta2[14][-1])
+            print(len(delta2[16]))
         ax0.plot(delta1[11][1:-1],delta1[14][1:-1],color=clcolor,linestyle='-.')
         ax0.plot(delta1[11][1:-1],delta1[13][1:-1],color=kcolor,ls='-.')
         ax0.plot(delta1[11][1:-1],delta1[16][1:-1],'k',ls='-.')
         ax1.plot(delta1[11][1:-1],delta1[18][1:-1],color=nacolor,ls='-.') #nai
         ax2.plot(delta1[11][1:-1],delta1[10][1:-1],color='k',ls='-.') #volume
-        print (delta1[16][-1]-delta1[14][-1])
-        print len(delta1[16])
+        print(delta1[16][-1]-delta1[14][-1])
+        print(len(delta1[16]))
     plt.savefig(title)
     plt.show()
     return dex,delta,delta1
     
 def f4d(f=2e-3,new=0,title='f4d.eps'):
-    print "\nFigure 4D"
+    print("\nFigure 4D")
     
     #dxe=plm(gx=0,xt=1600,two=0,tt=3000,f4d=f,neww=0,graph=1,p=(10**(-3))/(F),pkcc=1e-3/F)
     dxe=plm(gx=0,xt=360,two=0,tt=1800,f4d=f,neww=0)
@@ -184,6 +184,6 @@ def sf4c(GX=[5e-10,1e-9,5e-9,7e-9,1e-8,2e-8],tt=600,xt=25,ratio=0.98,xend=0):
         deltw.append((dex[10][-1])/dex[10][1])
         deltx.append(max(np.absolute((dex[20]-dex[20][1]))))
         minithreefig([dex[11][1:-1],dex[14][1:-1],dex[13][1:-1],dex[16][1:-1],dex[10][1:-1],dex[20][1:-1]],xcolor)
-    print maxdeltecl
+    print(maxdeltecl)
     twoaxes(GX,deltecl,maxdeltecl,deltx,deltw)
     return
