@@ -65,24 +65,35 @@ def minifigtwoaxes(delta):
     ax2.plot(delta[0],delta[5],color=xcolor,clip_on=False)
     return ax0, ax1, ax2
     
-def minithreefig(delta,colour,yl=[[-100,-20],[1.0e-13,1.6e-13],[-0.95,-0.8]]):
-    plt.figure()
+def minithreefig(delta,colour,yl=[[-100,-20],[60,70],[1.0e-13,1.6e-13],[-0.95,-0.8]],title='none'):
+    fig = plt.figure()
     gs = gridspec.GridSpec(3,1,height_ratios=[1.5,0.5,0.5])
     ax0=plt.subplot(gs[0])
-    ax0.plot(delta[0],delta[1],color=clcolor)
-    ax0.plot(delta[0],delta[2],color=kcolor)
-    ax0.plot(delta[0],delta[3],'k')
-    ax0.plot(delta[0],delta[4],color=nacolor)
+    plt.title(title)
+    ax0.plot(delta[0],delta[1],color=clcolor,label='ECl')
+    ax0.plot(delta[0],delta[2],color=kcolor,label='EK')
+    ax0.plot(delta[0],delta[3],'k',label='Vm')
     ax0.set_ylim(yl[0])
-    ax1=plt.subplot(gs[1])
-    ax1.plot(delta[0],delta[4],color=nacolor)
-    ax2=plt.subplot(gs[2])
-    ax2.plot(delta[0],delta[5],color=wcolor) #volume
-    ax2.set_ylim(yl[1])
+    ax0.set_ylabel('mV')
+    ax0.legend()
+    ax1=plt.subplot(gs[1],sharex=ax0)
+    ax1.plot(delta[0],delta[4],color=nacolor,label='ENa')
+    ax1.legend()
+    ax1.set_ylim(yl[1])
+    ax1.set_ylabel('mV')
+    ax2=plt.subplot(gs[2],sharex=ax0)
+    ax2.plot(delta[0],delta[5],color=wcolor,label='volume') #volume
+    ax2.set_ylim(yl[2])
+    ax2.legend(loc='lower right')
+    ax2.set_ylabel('pL')
     ax3=ax2.twinx()
-    ax3.plot(delta[0],delta[6],color=colour) #conc X
-    ax3.set_ylim(yl[2])
-    return ax0, ax1, ax2
+    ax3.plot(delta[0],delta[6],color=colour,label='[X]_i') #conc X
+    ax3.set_ylim(yl[3])
+    ax3.legend(loc='upper right')
+    ax3.set_ylabel('mM')
+    ax2.set_xlabel('time (seconds)')
+    plt.savefig(title+'.png',dpi=150)
+    return fig, ax0, ax1, ax2, ax3
 
 
 def fluxplot(timevalues,title=''):

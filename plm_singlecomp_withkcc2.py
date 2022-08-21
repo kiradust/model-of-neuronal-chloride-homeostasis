@@ -150,7 +150,8 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
     if k_init==0:
         k=cl-z*x-na
         
-    print("k_init: "+str(k))
+    print('Initial values: na', na, 'k', k, 'cl', cl, 'x', x, 'vm', FinvCAr*(na+k-cl+z*x))
+    print('w', w, 'radius', rad, 'z', z)
     print("osi: "+str(k+cl+x+na))
     print("z_aim: "+str(ztarget) +" with zflux of "+str(Zx))
     
@@ -249,7 +250,12 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
 
         if tpend>t>xp:
             jphos = ecp*(V-R*np.log(nae/na))
-            z=(z*x+3*dx)/(x+dx)
+            z=(z*x-3*dx)/(x+dx)
+        elif tpend<=t<=tpend+dt:
+            print('Tp_end values: na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
+        else:
+            jphos = 0
+            z=(z*x-3*dx)/(x+dx)
 
         # ionic flux equations
         dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw-3*jphos) 
@@ -364,7 +370,7 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
         #plt.savefig(title)
         plt.show()
     
-    print('na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
+    print('Final values: na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
     print('w', w, 'radius', rad, 'z', z)
     print('ecl', Cl[-1])
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K2, X2, w, z_delt, xe_delt, gkcc_delt, a0, a1, a2, naflux, kflux, clflux, wflux, Xflux, np.log10(jp*F), osi, ose
