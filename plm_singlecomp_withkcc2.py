@@ -82,7 +82,7 @@ vmax=5*1e-3 #M/s Vmax (Raimondo 2012)
 def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,
 xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=100000,ratio=0.98,xend=120,
 osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,
-title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0,ecp=0,xp=0,tpend=0):
+title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0,ecp=0,xp=0,tpend=0,phoscomb=0):
     # create plotting arrays
     Vm=[]
     K=[]
@@ -250,7 +250,6 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
 
         if tpend>t>xp:
             jphos = ecp*(V-R*np.log(nae/na))
-            z=(z*x-3*dx)/(x+dx)
         elif tpend<=t<=tpend+dt:
             print('Tp_end values: na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
         else:
@@ -258,14 +257,18 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
             z=(z*x-3*dx)/(x+dx)
 
         # ionic flux equations
-        dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw-3*jphos) 
+        dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw+3*jphos) 
         dk=-dt*Ar*(gk*(V-R*np.log(ke/k))-ck*jp*sw-jkcc2)
         dcl=dt*Ar*(gcl*(V+R*np.log(cle/cl))+jkcc2) #dna,dk,dcl: increase in intracellular ion conc during time step dt
-        dx=-dt*Ar*(zx*gx*(V-R/zx*np.log(xe/(xtemp)))-jphos)
+        dx=-dt*Ar*(zx*gx*(V-R/zx*np.log(xe/(xtemp)))+jphos)
         na+=dna
         k+=dk
         cl+=dcl # increment concentrations
-        x+=dx
+        if phoscomb == 0:
+            z=(z*x-3*dx)/(x+dx)
+            x+=dx
+        else:
+            z=(z*x-3*dx)/(x)
         
         # anion flux switches
         if xend==0 and (t>xt):
