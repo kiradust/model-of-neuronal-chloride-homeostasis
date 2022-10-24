@@ -39,6 +39,7 @@ from matplotlib import gridspec
 from pylab import rcParams
 rcParams['figure.figsize'] = 8,8
 from plotting import clcolor, kcolor, xcolor,nacolor,wcolor
+from tqdm import tqdm
 
 # constants, fixed parameters
 R=26.725*1e-3
@@ -79,10 +80,11 @@ qpump=6.13*1e-5 #picoamperes
 kd=15*1e-3 #M Kd (Raimondo 2012)
 vmax=5*1e-3 #M/s Vmax (Raimondo 2012)
 
-def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,clinit=5.163e-3,toff=150000,ton=150000,tt=200,
-xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=100000,ratio=0.98,xend=120,
+def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1e12,os_init=ose,clinit=5.163e-3,toff=1e12,ton=1e12,tt=200,
+xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=1e12,ratio=0.98,xend=120,
 osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,
-title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0,ecp=0,xp=0,tpend=0,phoscomb=0):
+title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0,ecp=0,xp=0,tpend=0,
+phoscomb=0,phoscharge=2):
     # create plotting arrays
     Vm=[]
     K=[]
@@ -104,7 +106,7 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
     Xflux=[]
     wflux=[]
     
-    dt=1e-3 # zero time, dt time step
+    dt=1e-2 # zero time, dt time step
     ts=tt/n # plotting timestep 
     ctr=1 # counter for plotting points
     t=0 # real time
@@ -165,6 +167,11 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
     pd=default_p
     em=(default_p-pdinit)/(12.0*10**4)/8
     jeffconstant=p*(na/nao)**3
+    dxtotal = []
+
+    phosup=0
+    tphos=(10e-3)*w
+    phosdoub = []
     
     # related to anion flux
     if two==1:
@@ -173,7 +180,7 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
         if paratwo==True:
             return (w*x)
     
-    while t < tt: # loop over time              
+    for a in tqdm(range(int(tt/dt))): # loop over time              
         V=FinvCAr*(na+k-cl+z*x) # voltage
         
         # update arrays for plotting
@@ -198,6 +205,7 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
             naflux.append(dna)
             kflux.append(dk)
             ctr+=1
+            dxtotal.append(dx)
         
         # various conditional states
         if tk+360>t>tk:
@@ -248,27 +256,38 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
         else:
             jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
 
-        if tpend>t>xp:
+        if tpend>t>xp and phosup<tphos:
             jphos = ecp*(V-R*np.log(nae/na))
+            lastt=t
         elif tpend<=t<=tpend+dt:
+            jphos = 0
+            z=(z*x-phoscharge*dx)/(x+dx)
+            phosdoub.append(t)
             print('Tp_end values: na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
+        elif phosup>tphos and lastt<=t<=lastt+dt:
+            jphos = ecp*(V-R*np.log(nae/na))
+            print('phosphate doubled')
+            phosdoub.append(t)
+            phosup = 0
+            print('Phos doub values: na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
         else:
             jphos = 0
-            z=(z*x-3*dx)/(x+dx)
+            z=(z*x-phoscharge*dx)/(x+dx)
 
         # ionic flux equations
-        dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw+3*jphos) 
+        dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw+2*jphos) 
         dk=-dt*Ar*(gk*(V-R*np.log(ke/k))-ck*jp*sw-jkcc2)
         dcl=dt*Ar*(gcl*(V+R*np.log(cle/cl))+jkcc2) #dna,dk,dcl: increase in intracellular ion conc during time step dt
         dx=-dt*Ar*(zx*gx*(V-R/zx*np.log(xe/(xtemp)))+jphos)
         na+=dna
         k+=dk
         cl+=dcl # increment concentrations
+        phosup+=dx*w
         if phoscomb == 0:
-            z=(z*x-3*dx)/(x+dx)
+            z=(z*x-phoscharge*dx)/(x+dx)
             x+=dx
         else:
-            z=(z*x-3*dx)/(x)
+            z=(z*x-phoscharge*dx)/(x)
         
         # anion flux switches
         if xend==0 and (t>xt):
@@ -376,7 +395,7 @@ title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccm
     print('Final values: na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
     print('w', w, 'radius', rad, 'z', z)
     print('ecl', Cl[-1])
-    return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K2, X2, w, z_delt, xe_delt, gkcc_delt, a0, a1, a2, naflux, kflux, clflux, wflux, Xflux, np.log10(jp*F), osi, ose
+    return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K2, X2, w, z_delt, xe_delt, gkcc_delt, a0, a1, a2, naflux, kflux, clflux, wflux, Xflux, np.log10(jp*F), osi, ose, phosdoub
 
 def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     nai=[]

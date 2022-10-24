@@ -7,6 +7,7 @@ Created on Sun Nov 06 13:34:52 2016
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from pylab import rcParams
+import numpy as np
 rcParams['figure.figsize'] = 8,8
 
 # colours chosen from colorbrewer2.org
@@ -76,22 +77,31 @@ def minithreefig(delta,colour,yl=[[-100,-20],[60,70],[1.0e-13,1.6e-13],[-0.95,-0
     ax0.set_ylim(yl[0])
     ax0.set_ylabel('mV')
     ax0.legend()
+    ax0.vlines(delta[-1][:-1],yl[0][0],yl[0][1])
+    ax0.vlines(delta[-1][-1],yl[0][0],yl[0][1],linestyles='--')
+    xlabrange=np.around(np.linspace(0,(delta[0][-1])/(60*60),5),2)
+    ax0.set_xticks(np.linspace(0,delta[0][-1],5))
+    ax0.set_xticklabels(xlabrange)
     ax1=plt.subplot(gs[1],sharex=ax0)
     ax1.plot(delta[0],delta[4],color=nacolor,label='ENa')
     ax1.legend()
     ax1.set_ylim(yl[1])
     ax1.set_ylabel('mV')
+    ax1.vlines(delta[-1][:-1],yl[1][0],yl[1][1])
+    ax1.vlines(delta[-1][-1],yl[1][0],yl[1][1],linestyles='--')
     ax2=plt.subplot(gs[2],sharex=ax0)
     ax2.plot(delta[0],delta[5],color=wcolor,label='volume') #volume
     ax2.set_ylim(yl[2])
     ax2.legend(loc='lower right')
     ax2.set_ylabel('pL')
+    ax2.vlines(delta[-1][:-1],yl[2][0],yl[2][1])
+    ax2.vlines(delta[-1][-1],yl[2][0],yl[2][1],linestyles='--')
     ax3=ax2.twinx()
     ax3.plot(delta[0],delta[6],color=colour,label='[X]_i') #conc X
     ax3.set_ylim(yl[3])
     ax3.legend(loc='upper right')
     ax3.set_ylabel('mM')
-    ax2.set_xlabel('time (seconds)')
+    ax2.set_xlabel('time (hours)')
     plt.savefig(title+'.png',dpi=150)
     return fig, ax0, ax1, ax2, ax3
 
