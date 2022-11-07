@@ -83,7 +83,7 @@ vmax=5*1e-3 #M/s Vmax (Raimondo 2012)
 def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=1e12,os_init=ose,clinit=5.163e-3,toff=1e12,ton=1e12,tt=200,
 xinit=154.962e-3,two=0,xe=xe,f4d=0,ke=ke,n=1800,k_init=122.873e-3,na_init=14.002e-3,tk=1e12,ratio=0.98,xend=120,
 osmofix=False,paratwo=False,moldelt=1e-13,xflux=0,z=z,dz=0,Zx=-1,ztarget=-100,length=length,areascale=1,rad=rad,
-title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0,ecp=0,xp=0,tpend=0,
+title='fig.eps',neww=0,ls='-',a0=0,a1=0,a2=0,os_choose=0,f1d=False,hamada=0,kccmodel=0,vmax=vmax,lin=0,ecp=0,xp=0,tpend=10e6,
 phoscomb=0,phoscharge=2):
     # create plotting arrays
     Vm=[]
@@ -106,7 +106,10 @@ phoscomb=0,phoscharge=2):
     Xflux=[]
     wflux=[]
     
-    dt=1e-2 # zero time, dt time step
+    dt=1e-4 # zero time, dt time step
+    if ecp > 0:
+        dt = 1e-2
+        print(dt)
     ts=tt/n # plotting timestep 
     ctr=1 # counter for plotting points
     t=0 # real time
@@ -479,22 +482,24 @@ def zp(Z,p=default_P/10000.0,gkcc=gkcc,graph=0,molinit=0,moldelt=0):
         ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc)*beta))
         cli.append(cle*np.exp(+v/R-2*q*gkcc*beta))
         xi.append(ose-nai[-1]-cli[-1]-ki[-1])
-        pi.append(np.log10(F*R*q/(((np.exp(-v/R-3*q/gna)))**3)))
+        pi.append(1000.0*np.log10(F*R*q/(((np.exp(-v/R-3*q/gna)))**3)))
         
         ek.append(1000*R*np.log(ke/ki[-1]))
         ena.append(1000*R*np.log(nae/nai[-1]))
         ecl.append(1000*R*np.log(cli[-1]/cle))
         exi.append(z*1000*R*np.log(xe/xi[-1]))
         ev.append(1000.0*v)
-        
         if molinit != 0:
             w.append((molinit+moldelt)/xi[-1])
         else:
             w.append(0.1549/xi[-1])
     
     if graph ==1:
-        plt.figure()
-        plt.plot(Z,nai,'r',Z,ki,'c',Z,cli,'g',Z,xi,'b',Z,vm,'k')
+        fig=plt.figure()
+        ax = plt.subplot()
+        ax.plot(-Z,nai,'r',-Z,ki,'c',-Z,cli,'g',-Z,xi,'b')
+        ax2 = ax.twinx()
+        ax2.plot(-Z,-np.array(vm),'k')
         plt.title('parametric plot: ion concentrations and membrane potential over z values at log pump rate of '+str(p))
         plt.xlabel('100.z')
         plt.ylabel('V                    M')

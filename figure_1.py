@@ -18,7 +18,7 @@ sym=['-',':','--','-.']
 
 def f1b(init_cl=[1e-3,15e-3,50e-3,90e-3],ham=0):
     leg=[]
-    print "Figure 1B"
+    print("Figure 1B")
     plt.figure()
     for i in range(len(init_cl)):
         endcl=plm(clinit=init_cl[i],tt=1800,osmofix=False,k_init=0, hamada=ham)
@@ -35,7 +35,7 @@ def f1c(new=0,l='-',g1=0,g2=0,g3=0):
     g=1
     if new!=0:
         g=2
-    print "\nFigure 1C"
+    print ("\nFigure 1C")
     offpump=plm(graph=g,ton=3000,toff=9000,tt=12000,title='f1c.eps',neww=new,ls=l,a0=g1,a1=g2,a2=g3)
     return offpump
     
@@ -85,7 +85,7 @@ def f1d(time=25000,ham=0,l=0):
     para=zplm(molinit=molinit)
     
     # plotting
-    print "\nFigure 1D"
+    print ("\nFigure 1D")
     gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
     plt.subplot(gs[0])
     plt.plot(para[0],para[8],color=clcolor,linestyle='-')

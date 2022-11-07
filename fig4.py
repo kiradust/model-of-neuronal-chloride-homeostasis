@@ -134,7 +134,7 @@ def f4d(f=2e-3,new=0,title='f4d.eps'):
     plt.show()
     return dxe
 
-def f4e(Z=range(-120,-50),moldelt=1e-12): # extra function needed in figure 5
+def f4e(Z=range(-400,0),moldelt=1e-12): # extra function needed in figure 5
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=moldelt)
     zee=zp(Z=Z,molinit=molinit,moldelt=moldelt)
     newx=[]
