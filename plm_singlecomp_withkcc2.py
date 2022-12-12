@@ -173,6 +173,7 @@ phoscomb=0,phoscharge=2):
     dxtotal = []
 
     phosup=0
+    phosin=0.005
     tphos=(10e-3)*w
     phosdoub = []
     
@@ -259,8 +260,11 @@ phoscomb=0,phoscharge=2):
         else:
             jkcc2=pkcc*(K[ctr-2]-Cl[ctr-2])/1000.0 #Doyon
 
+        ephos=-R/3.0*np.log(0.01/phosin)
+
         if tpend>t>xp and phosup<tphos:
-            jphos = ecp*(V-R*np.log(nae/na))
+            jphos = ecp*(ephos-R*np.log(nae/na))
+            # jphos = ecp*(V-R*np.log(nae/na))
             lastt=t
         elif tpend<=t<=tpend+dt:
             jphos = 0
@@ -277,11 +281,11 @@ phoscomb=0,phoscharge=2):
             jphos = 0
             z=(z*x-phoscharge*dx)/(x+dx)
 
-        # ionic flux equations
+        # ionic flux equations 
         dna=-dt*Ar*(gna*(V-R*np.log(nao/na))+cna*jp*sw+2*jphos) 
         dk=-dt*Ar*(gk*(V-R*np.log(ke/k))-ck*jp*sw-jkcc2)
         dcl=dt*Ar*(gcl*(V+R*np.log(cle/cl))+jkcc2) #dna,dk,dcl: increase in intracellular ion conc during time step dt
-        dx=-dt*Ar*(zx*gx*(V-R/zx*np.log(xe/(xtemp)))+jphos)
+        dx=-dt*Ar*(zx*gx*(V-R/zx*np.log(xe/(xtemp)))+2*jphos)
         na+=dna
         k+=dk
         cl+=dcl # increment concentrations
@@ -289,6 +293,7 @@ phoscomb=0,phoscharge=2):
         if phoscomb == 0:
             z=(z*x-phoscharge*dx)/(x+dx)
             x+=dx
+            phosin+=dx
         else:
             z=(z*x-phoscharge*dx)/(x)
         
