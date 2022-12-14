@@ -272,7 +272,7 @@ phoscomb=0,phoscharge=2):
             phosdoub.append(t)
             print('Tp_end values: na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
         elif phosup>tphos and lastt<=t<=lastt+dt:
-            jphos = ecp*(V-R*np.log(nae/na))
+            jphos = ecp*(ephos-R*np.log(nae/na))
             print('phosphate doubled')
             phosdoub.append(t)
             phosup = 0
