@@ -140,14 +140,14 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
             xinit=x
         else:
             cl=(os_init+(z-1)*x)/2.0
-            print cl
+            print(cl)
     
     if k_init==0:
         k=cl-z*x-na
         
-    print "k_init: "+str(k)
-    print "osi: "+str(k+cl+x+na)
-    print "z_aim: "+str(ztarget) +" with zflux of "+str(Zx)
+    print("k_init: "+str(k))
+    print("osi: "+str(k+cl+x+na))
+    print("z_aim: "+str(ztarget) +" with zflux of "+str(Zx))
     
     xm=x*ratio
     xtemp=x*(1-ratio)
@@ -263,7 +263,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                     tt=t+1000
             else:
                 if (min(z,zx)<=ztarget<=max(z,zx)):
-                    print 'anions stopped diffusing at '+str(t)
+                    print('anions stopped diffusing at '+str(t))
                     xend=1
                     dx=0
                 else:
@@ -272,7 +272,7 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
                         tt=t+50
                         dx=-xflux
                     else:
-                        print 'anions stopped diffusing at '+str(t)
+                        print('anions stopped diffusing at '+str(t))
                         xend=1
                         dx=0
                 
@@ -354,12 +354,12 @@ def plm(p=(10**(default_p))/(F),graph=0,pkcc=gkcc,gx=0,xt=100000,os_init=ose,cli
         #plt.savefig(title)
         plt.show()
     
-    print 'na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1
-    print 'w', w, 'radius', rad, 'z', z
-    print 'ecl', Cl[-1]
+    print('na', na, 'k', k, 'cl', cl, 'x', x, 'vm', V, 'cle', cle, 'ose', ose, 'osi', osi, 'deltx', x*w-xinit*w1)
+    print('w', w, 'radius', rad, 'z', z)
+    print('ecl', Cl[-1])
     return na, k, cl, x, V, Na[-1], K[-1], Cl[-1], X[-1], Vm[-1], W, time, Na, K, Cl, X, Vm, Cl2, Na2, K2, X2, w, z_delt, xe_delt, gkcc_delt, a0, a1, a2, naflux, kflux, clflux, wflux, Xflux, np.log10(jp*F), osi, ose
 
-def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
+def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0,gextra=0):
     nai=[]
     ki=[]
     cli=[]
@@ -374,22 +374,22 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     ev=[]
     w=[]
     Q=[]
-    #beta=1.0/(gk*gcl-gkcc*gcl+gk*gkcc)
+    beta=1.0/((gk+gextra)*(gcl+gextra)+gkcc*gcl+gk*gkcc+2*gkcc*gextra)
     for p in P:
         q=10**(p/10000.0)/(F*R)
         Q.append(q*R)
         if z==-1:
-            theta=0.5*ose/(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))
+            theta=0.5*ose/(nae*np.exp(-3*q/(gna+gextra))+ke*np.exp(2*q*(gcl+gkcc+gextra)*beta))
         else:
-            theta=(-z*ose+np.sqrt(z**2*ose**2+4*(1-z**2)*cle*np.exp(-2*q*gkcc*beta)*(nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))))/(2*(1-z)*((nae*np.exp(-3*q/gna)+ke*np.exp(2*q*(gcl+gkcc)*beta))))    
+            theta=(-z*ose+np.sqrt(z**2*ose**2+4*(1-z**2)*cle*np.exp(-2*q*gkcc*beta)*(nae*np.exp(-3*q/(gna+gextra))+ke*np.exp(2*q*(gcl+gkcc+gextra)*beta))))/(2*(1-z)*((nae*np.exp(-3*q/(gna+gextra))+ke*np.exp(2*q*(gcl+gkcc+gextra)*beta))))    
         v=(-np.log(theta))*R
         vm.append(v)
-        zi.append(nae*np.exp(-v/R-3*q/gna))
-        nai.append(nae*np.exp(-v/R-3*q/gna))
-        ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc)*beta))
+        zi.append(nae*np.exp(-v/R-3*q/(gna+gextra)))
+        nai.append(nae*np.exp(-v/R-3*q/(gna+gextra)))
+        ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc+gextra)*beta))
         cli.append(cle*np.exp(+v/R-2*q*gkcc*beta))
         xi.append(ose-nai[-1]-cli[-1]-ki[-1])
-        pi.append(1000.0*np.log10(F*R*q/(((np.exp(-v/R-3*q/gna)))**3)))
+        pi.append(1000.0*np.log10(F*R*q/(((np.exp(-v/R-3*q/(gna+gextra))))**3)))
         
         ek.append(1000*R*np.log(ke/ki[-1]))
         ena.append(1000*R*np.log(nae/nai[-1]))
@@ -413,7 +413,7 @@ def zplm(z=z,gkcc=gkcc,gcl=gcl,gna=gna,gk=gk,molinit=0):
     
     return pi, ena, ek, ecl, exi, ev, nai, ki, cli, xi, vm, w, Q
 
-def zp(Z,p=default_P/10000.0,gkcc=gkcc,graph=0,molinit=0,moldelt=0):
+def zp(Z,p=default_P/10000.0,gkcc=gkcc,graph=0,molinit=0,moldelt=0,gextra=0):
     nai=[]
     ki=[]
     cli=[]

@@ -46,7 +46,7 @@ def minifig(delta,x=0, yl=[[-100,40],[1.75e-12,2.75e-12]]):
         ax0.axvline(x=x,linestyle='--',color='0.8')
     ax1=plt.subplot(gs[1])
     ax1.plot(delta[0],delta[6],color=wcolor)
-    #ax1.set_ylim(yl[1])
+    ax1.set_ylim(yl[1])
     if x!=0:
         ax1.axvline(x=x,linestyle='--',color='0.8')
     return
@@ -72,6 +72,7 @@ def minithreefig(delta,colour,x=0,yl=[[-100,-70],[1.0e-13,1.6e-13],[-0.95,-0.8]]
     ax0.plot(delta[0],delta[1],color=clcolor)
     ax0.plot(delta[0],delta[2],color=kcolor)
     ax0.plot(delta[0],delta[3],'k')
+    ax0.plot(delta[0],delta[6],color=nacolor)
     ax0.set_ylim(yl[0])
     if x!=0:
         ax0.axvline(x=x,linestyle='--',color='0.8')
