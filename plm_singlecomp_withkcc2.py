@@ -44,10 +44,10 @@ from plotting import clcolor, kcolor, xcolor,nacolor,wcolor
 R=26.725*1e-3
 F=96485.0 # R (RT/F) in Volts, where F is Faraday's constant in C/mol, and T is 37 deg C
 n=200 # points to plot 
-gna=2e-3/F
-gk=7e-3/F
-gcl=2e-3/F # gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
-gkcc=2e-3/F # gkcc conductance
+gna = 20e-3/F # gna=2e-3/F
+gk = 80e-3/F # gk=7e-3/F
+gcl = 21e-3/F # gcl=2e-3/F # gna,gk,gcl: conductances in mS/cm^2 conv to S/dm^2 (10^-3/10^-2) - corrected for neuron
+gkcc = 20e-3/F # gkcc=2e-3/F # gkcc conductance
 ck=2
 cna=3 # cna,ck: pump (ATPase) stoichiometries
 rad=5*1e-5 # radius in um convert to dm
@@ -55,7 +55,7 @@ rad0=rad
 length=25*1e-5 # length in um converted to dm
 nao=145e-3
 clo=119e-3
-ko=3.5e-3 # nao,clo,ko: extracellular concentrations (mM converted to M)
+ko=4e-3 # nao,clo,ko: extracellular concentrations (mM converted to M)
 z=-0.85 # intracellular (and extracellular) charge of impermeant anions
 gamma=gna/gk
 beta=1.0/(gk*gcl+gkcc*gk+gcl*gkcc)
@@ -65,7 +65,7 @@ cle=clo
 xe1=-1*(cle-nae-ke)
 xe=xe1*0.2
 ose=xe1+cle+nae+ke # extracellular osmolarity
-P=range(-70000,-38000)
+P = range(-60000, -25000) # P=range(-70000,-38000)
 default_p=-1
 default_P=-40456 # P_effective x10^5
 vw=0.018 # partial molar volume of water, dm3/mol

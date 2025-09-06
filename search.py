@@ -28,6 +28,8 @@ print('cli'+str(para[8][argvm]),'nai'+str(para[6][argvm]),'ki'+str(para[7][argvm
 print(para[5][argecl],para[3][argecl])
 print(para[0][argvm],para[0][argecl])
 
+breakpoint()
+
 # plotting
 gs = gridspec.GridSpec(3, 1, height_ratios=[1.5, 1, 1]) 
 plt.subplot(gs[0])
