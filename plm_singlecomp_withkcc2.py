@@ -66,8 +66,9 @@ xe1=-1*(cle-nae-ke)
 xe=xe1*0.2
 ose=xe1+cle+nae+ke # extracellular osmolarity
 P = range(-60000, -25000) # P=range(-70000,-38000)
-default_p=-1
-default_P=-40456 # P_effective x10^5
+# default_p=-1
+default_p = 359.2/1000.0
+default_P= -26865 # P_effective x10^4 -- updated for chabc fits
 vw=0.018 # partial molar volume of water, dm3/mol
 pw=0.0015 # osmotic permeability, biological membrane, dm s
 km=6*10**(-7) # extensional rigidity of RBC at 23 deg, N/dm

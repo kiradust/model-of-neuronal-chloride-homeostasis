@@ -10,8 +10,10 @@ from plotting import minifig, minithreefig, twoaxes,wcolor, kcolor, clcolor, xco
 import matplotlib.pyplot as plt
 import numpy as np
 from pylab import rcParams
+from tqdm import tqdm
+
 rcParams['figure.figsize'] = 8,8
-prange=range(-60000,-33000)
+prange=range(-100000, -33000)
 
 # delta_gs keeps the effective pump rate constant, while delta_gs3 uses a constant p and P_eff is dependent on the final sodium concentration (checks back to find corresponding values)
 
@@ -68,9 +70,9 @@ def delta_gs(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0):
         
     print(ecl[-1], ek[-1], ev[-1])
     
-    return np.log10(chosen),ecl,ek,ena,df,ev,w,kpflux,kaflux
+    return np.log10(chosen),ecl,ek,ena,df,ev,w#,kpflux,kaflux
 
-def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0,Gextra=[0]):
+def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0,Gextra=[0], prange=prange):
     vm=[]
     cli=[]
     nai=[]
@@ -91,7 +93,7 @@ def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0,Gextra=[0]):
     molinit=plm(gx=1e-8,xt=25,tt=100,two=1,paratwo=True,moldelt=0)
     
     # only operate on conductance which is changing
-    for i in range(max(len(Gcl),len(Gkcc),len(Gk),len(Gna),len(Gextra))):
+    for i in tqdm(range(max(len(Gcl),len(Gkcc),len(Gk),len(Gna),len(Gextra)))):
         for a in Gk, Gna, Gkcc, Gcl, Gextra:
             if len(a)<=i:
                 a.append(a[-1])
@@ -119,13 +121,15 @@ def delta_gs3(Gk=[70],Gna=[20],Gkcc=[20],Gcl=[20],molinit=0,Gextra=[0]):
                 theta=(-z*ose+np.sqrt(z**2*ose**2+4*(1-z**2)*cle*np.exp(-2*q*gkcc*beta)*(nae*np.exp(-3*q/(gna+gextra))+ke*np.exp(2*q*(gcl+gkcc+gextra)*beta))))/(2*(1-z)*((nae*np.exp(-3*q/(gna+gextra))+ke*np.exp(2*q*(gcl+gkcc+gextra)*beta))))    
             v=(-np.log(theta))*R
             # efficient coding for expression pi=np.log10(F*R*q/(((np.exp(-v/R-3*q/gna)))**3))
-            pi=np.exp(-v/R-3*q/(gna+gextra))
+            pi=np.exp(-v/R-3*q/(gna+gextra)) # to avoid log10(0)
+            # if np.isnan(pi):
+            #     breakpoint()
             pi=-3*np.log10(pi)
             pi+=np.log10(F*R*q)
             
             # match constant pump rates to determine which pair (l, na) produce (very close to) the default pump rate
             # append to arrays
-            if np.abs(pi-default_p)<0.01 and found==False:
+            if np.abs(pi-default_p)<0.1 and found==False:
                 vm.append(v)
                 nai.append(nae*np.exp(-v/R-3*q/(gna+gextra)))
                 ki.append(ke*np.exp(-v/R+2*q*(gcl+gkcc+gextra)*beta))
@@ -197,10 +201,23 @@ def f3a():
     plt.show()
     return dg
     
-def f3b():
-    dg=delta_gs3(Gkcc=range(1,100),Gna=[20],Gk=[70],Gcl=[20])
+def f3b(prange=prange):
+    dg = delta_gs(Gkcc=range(1,10000),Gna=[200],Gk=[800],Gcl=[210])
+    # dg=delta_gs3(Gkcc=range(1,100,10),Gna=[20],Gk=[80],Gcl=[21], prange=prange)
     print("\nFigure 3B")
-    minithreefig([dg[0],dg[1],dg[2],dg[5],dg[6],np.array(dg[5])-np.array(dg[1]),dg[3]],'r',x=np.log10(20),yl=[[40,70],[1.9e-12,2.10e-12],[0,20]])
+    # plt.plot(dg[0],dg[5],color='k',clip_on=False)
+    # plt.show()
+    # plt.plot(dg[0],dg[2],color='k',clip_on=False)
+    # plt.show()
+    # plt.plot(dg[0],dg[3],color='k',clip_on=False)
+    # plt.show()
+    # plt.plot(dg[0],dg[4],color='k',clip_on=False)
+    # plt.show()
+    # plt.plot(dg[0],dg[1],color='k',clip_on=False)
+    # plt.show()
+    # plt.plot(dg[0],dg[6],color='k',clip_on=False)
+    # plt.show()
+    minithreefig([dg[0],dg[1],dg[2],dg[5],dg[6],np.array(dg[5])-np.array(dg[1]),dg[3]],'r',x=np.log10(200),yl=[[-100,-50],[1.9e-12,2.10e-12],[0,20]])
     #minithreefig([10**dg[0],dg[1],dg[2],dg[5],dg[-1],dg[4]],'k',x=np.log10(20),yl=[[-100,-60],[1.9e-12,2.05e-12],[0,24]])
     plt.savefig('f3b.svg',dpi=150)
     plt.show()
